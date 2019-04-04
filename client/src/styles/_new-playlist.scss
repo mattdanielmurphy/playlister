@@ -1,0 +1,35 @@
+#songs {
+	margin-bottom: 1em;
+}
+
+#playlist {
+	margin-bottom: 1em;
+	.song {
+		&:hover {
+			color: black;
+			cursor: default;
+		}
+	}
+}
+
+.song {
+	font-size: .9em;
+	padding: .3em .5em;
+	border-bottom: 2px solid white;
+	transition: .15s;
+	&:last-of-type {
+		border: none;
+	}
+	&:hover {
+		cursor: pointer;
+		color: $blue;
+	}
+	&.selected {
+		&:hover {
+			color: black;
+			background: lighten($blue, 25);
+		}
+		font-weight: bold;
+		background: lighten($blue, 30);
+	}
+}

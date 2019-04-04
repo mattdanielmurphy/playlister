@@ -1,0 +1,23 @@
+nav {
+	margin: 1em 0 4em 0;
+
+	a {
+		text-transform: uppercase;
+		color: $blue;
+		text-decoration: none;
+		border: 1px solid white;
+		border-bottom: 1px solid $blue;
+		padding: .5em.3em.4em.3em;
+		margin: .5em;
+		transition: .2s;
+		&:hover {
+			border: 1px solid $blue;
+			color: black;
+		}
+		&.currentPage {
+			color: black;
+			border: 1px solid white;
+			border-bottom: 1px solid #000;
+		}
+	}
+}

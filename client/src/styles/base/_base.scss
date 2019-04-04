@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Cabin:400,700');
+
+html {
+	font-size: 55%;
+}
+
+body {
+	font-family: 'Cabin', Helvetica, Arial, sans-serif;
+	font-size: $m-size;
+	padding: 2.5em;
+}
+
+button {
+	cursor: pointer;
+}
