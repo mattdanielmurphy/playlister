@@ -1,7 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Cabin:400,700');
 .song {
 	.now-playing {
 		display: inline-block;
 		width: 1.3em;
 		text-align: left;
+	}
+}
+
+audio {
+	vertical-align: bottom;
+}
+
+#player {
+	padding: 1em 0;
+	#buttons {
+		position: relative;
+		right: 10px;
+	}
+	button {
+		margin: 0 2px;
+	}
+	audio {
+		margin-left: 2px;
 	}
 }

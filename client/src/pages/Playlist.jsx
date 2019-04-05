@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import fetch from 'node-fetch'
-import { FaVolume } from 'react-icons/fa'
+import { FaVolume, FaForward, FaPlay, FaPause, FaBackward } from 'react-icons/fa'
 
 const Songs = ({ songs, currentSongIndex }) => {
 	console.log(currentSongIndex)
@@ -23,8 +23,19 @@ class Repeat extends Component {
 	render = () => <button onClick={(e) => this.handleClick(e)}>Repeat {this.props.repeat ? 'on' : 'off'}</button>
 }
 
-const NextSong = (props) => <button onClick={() => props.nextSong()}>Next</button>
-const PrevSong = (props) => <button onClick={() => props.prevSong()}>Prev</button>
+const NextSong = (props) => (
+	<button onClick={() => props.nextSong()}>
+		<FaForward />
+	</button>
+)
+const PlayPause = (props) => (
+	<button onClick={() => props.togglePlayPause()}>{props.playing ? <FaPause /> : <FaPlay />}</button>
+)
+const PrevSong = (props) => (
+	<button onClick={() => props.prevSong()}>
+		<FaBackward />
+	</button>
+)
 
 class Player extends Component {
 	state = { currentSongIndex: 0, repeat: false }
@@ -37,17 +48,19 @@ class Player extends Component {
 		this.setState({ currentSongSource, canPlayThrough: false })
 	}
 	handleCanPlayThrough() {
-		const audioEl = document.getElementsByTagName('audio')[0]
+		this.setState({ canPlayThrough: true })
 		if (this.state.continuePlaying) {
-			audioEl.play()
-			this.setState({ canPlayThrough: true })
+			this.play()
+		} else if (this.state.waitingToPlay) {
+			this.setState({ waitingToPlay: false })
+			this.play()
 		} else {
 			console.log('not playing through')
-			audioEl.pause()
+			this.pause()
 		}
 	}
 	handlePlaying() {
-		this.setState({ continuePlaying: true })
+		this.setState({ playing: true, continuePlaying: true })
 	}
 	getNextSongIndex() {
 		const lastSongIndex = this.props.songs.length - 1
@@ -83,6 +96,27 @@ class Player extends Component {
 	toggleRepeat() {
 		this.setState({ repeat: !this.state.repeat })
 	}
+	play() {
+		const audioEl = document.getElementsByTagName('audio')[0]
+		audioEl.play()
+		if (this.state.canPlayThrough) {
+			this.setState({ playing: true })
+		} else {
+			this.setState({ waitingToPlay: true })
+		}
+	}
+	pause() {
+		this.setState({ playing: false })
+		const audioEl = document.getElementsByTagName('audio')[0]
+		audioEl.pause()
+	}
+	togglePlayPause() {
+		if (this.state.playing) {
+			this.pause()
+		} else {
+			this.play()
+		}
+	}
 	render = () => {
 		if (!this.props.songs || this.props.songs.length === 0) return <div>loading...</div>
 		else if (!this.state.currentSongSource) {
@@ -95,6 +129,8 @@ class Player extends Component {
 						<Repeat toggleRepeat={(repeat) => this.toggleRepeat(repeat)} repeat={this.state.repeat} />
 					</div>
 					<PrevSong prevSong={() => this.prevSong()} />
+					<PlayPause playing={this.state.playing} togglePlayPause={() => this.togglePlayPause()} />
+					<NextSong nextSong={() => this.nextSong()} />
 					<audio
 						onEnded={() => this.handleSongEnd()}
 						onCanPlayThrough={() => this.handleCanPlayThrough()}
@@ -102,7 +138,6 @@ class Player extends Component {
 						controls
 						src={this.state.currentSongSource}
 					/>
-					<NextSong nextSong={() => this.nextSong()} />
 				</div>
 			)
 	}

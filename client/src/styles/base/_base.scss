@@ -12,4 +12,14 @@ body {
 
 button {
 	cursor: pointer;
+	font-family: 'Cabin', Helvetica, Arial, sans-serif;
+	// text-transform: uppercase;
+	padding: .6em .7em;
+	margin: .2em .5em;
+	font-size: .95em;
+	border: none;
+	background: lighten($blue, 10);
+	border-radius: .25em;
+	font-weight: normal;
+	color: white;
 }
