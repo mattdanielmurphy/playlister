@@ -27,12 +27,10 @@ class Playlists extends Component {
 	}
 	async componentDidMount() {
 		const { account_id } = await this.props.dbx.usersGetCurrentAccount()
-		fetch(`http://localhost/api/${account_id}/playlists`).then((res) => res.json()).then((playlist) => {
-			if (playlist.length === 0) {
-				this.setState({ noPlaylists: true })
-			} else {
-				this.setState({ playlists: this.state.playlists.concat(playlist) })
-			}
+		fetch(`http://localhost/api/${account_id}/playlists`).then(async (res) => {
+			const playlist = await res.json()
+			if (playlist.length === 0) this.setState({ noPlaylists: true })
+			else this.setState({ playlists: this.state.playlists.concat(playlist) })
 		})
 	}
 	render() {
