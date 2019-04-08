@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import fetch from 'node-fetch'
 import { FaVolume, FaForward, FaPlay, FaPause, FaBackward } from 'react-icons/fa'
+import { FiRepeat } from 'react-icons/fi'
 
-const Songs = ({ songs, currentSongIndex }) => {
-	console.log(currentSongIndex)
+const Songs = ({ songs, currentSongIndex, playSong }) => {
 	return (
 		<ol>
 			{songs.map((song, i) => (
-				<li className="song" key={i}>
+				<li className="song" key={i} onClick={() => playSong(i)}>
 					<div className="now-playing">{currentSongIndex === i && <FaVolume />}</div>
 					{song.name}
 				</li>
@@ -18,9 +18,15 @@ const Songs = ({ songs, currentSongIndex }) => {
 
 class Repeat extends Component {
 	handleClick() {
+		let repeatButton = document.getElementById('repeat-button')
+		repeatButton.classList.toggle('repeat-on')
 		this.props.toggleRepeat()
 	}
-	render = () => <button onClick={(e) => this.handleClick(e)}>Repeat {this.props.repeat ? 'on' : 'off'}</button>
+	render = () => (
+		<button id="repeat-button" onClick={() => this.handleClick()}>
+			<FiRepeat />
+		</button>
+	)
 }
 
 const NextSong = (props) => (
@@ -38,14 +44,15 @@ const PrevSong = (props) => (
 )
 
 class Player extends Component {
-	state = { currentSongIndex: 0, repeat: false }
+	state = { repeat: false, currentTime: 0, timeRemaining: '-:--' }
 	async setSongSource(index) {
+		this.props.dbx.usersGetCurrentAccount().then((r) => console.log(r.account_id))
 		let currentSongSource
 		let currentSong = this.props.songs[index]
 		const songPath = currentSong.path_lower
 		await this.props.dbx.filesGetTemporaryLink({ path: songPath }).then(({ link }) => (currentSongSource = link))
-		console.log('setting new source', index)
 		this.setState({ currentSongSource, canPlayThrough: false })
+		return true
 	}
 	handleCanPlayThrough() {
 		this.setState({ canPlayThrough: true })
@@ -55,7 +62,6 @@ class Player extends Component {
 			this.setState({ waitingToPlay: false })
 			this.play()
 		} else {
-			console.log('not playing through')
 			this.pause()
 		}
 	}
@@ -64,20 +70,20 @@ class Player extends Component {
 	}
 	getNextSongIndex() {
 		const lastSongIndex = this.props.songs.length - 1
-		const lastSongOfPlaylist = this.state.currentSongIndex === lastSongIndex
-		let currentSongIndex = lastSongOfPlaylist ? 0 : this.state.currentSongIndex + 1
+		const lastSongOfPlaylist = this.props.currentSongIndex === lastSongIndex
+		let currentSongIndex = lastSongOfPlaylist ? 0 : this.props.currentSongIndex + 1
 		// continue playing is set to true only if it's not the last song in the playlist && repeat is on && is already true
 		const continuePlayingIfAlreadyPlaying = this.state.continuePlaying ? true : false
 		let continuePlaying = lastSongOfPlaylist && !this.state.repeat ? false : continuePlayingIfAlreadyPlaying
-		this.setState({ currentSongIndex, continuePlaying })
+		this.setState({ continuePlaying })
 		this.props.setCurrentSongIndex(currentSongIndex)
 		return currentSongIndex
 	}
 	getPrevSongIndex() {
 		const lastSongIndex = this.props.songs.length - 1
 		const firstSongIndex = 0
-		const firstSongOfPlaylist = this.state.currentSongIndex === firstSongIndex
-		let currentSongIndex = firstSongOfPlaylist ? lastSongIndex : this.state.currentSongIndex - 1
+		const firstSongOfPlaylist = this.props.currentSongIndex === firstSongIndex
+		let currentSongIndex = firstSongOfPlaylist ? lastSongIndex : this.props.currentSongIndex - 1
 		this.setState({ currentSongIndex })
 		this.props.setCurrentSongIndex(currentSongIndex)
 		return currentSongIndex
@@ -87,11 +93,17 @@ class Player extends Component {
 	}
 	nextSong() {
 		const currentSongIndex = this.getNextSongIndex()
+		this.props.setCurrentSongIndex(currentSongIndex)
 		this.setSongSource(currentSongIndex)
 	}
 	prevSong() {
 		const currentSongIndex = this.getPrevSongIndex()
+		this.props.setCurrentSongIndex(currentSongIndex)
 		this.setSongSource(currentSongIndex)
+	}
+	playSong(index) {
+		this.props.setCurrentSongIndex(index)
+		this.setSongSource(index).then(() => this.play())
 	}
 	toggleRepeat() {
 		this.setState({ repeat: !this.state.repeat })
@@ -117,6 +129,33 @@ class Player extends Component {
 			this.play()
 		}
 	}
+	handleSeek(e) {
+		const audioEl = document.getElementsByTagName('audio')[0]
+		audioEl.currentTime = e.target.value
+	}
+	getTimeRemaining({ duration = this.state.currentSongDuration, currentTime = this.state.currentTime }) {
+		const totalSecs = Math.floor(duration - currentTime)
+		const secsRemaining = totalSecs % 60
+		const minsRemaining = totalSecs < 60 ? 0 : (totalSecs - secsRemaining) / 60
+		const leadingZero = (n) => (n < 10 ? `0${n}` : n)
+		return `${minsRemaining}:${leadingZero(secsRemaining)}`
+	}
+	handleDurationChange(e) {
+		const duration = e.target.duration
+		const seek = document.getElementById('seek')
+		seek.max = duration
+		const currentTime = 0
+		this.setState({
+			currentSongDuration: duration,
+			timeRemaining: this.getTimeRemaining({ duration, currentTime })
+		})
+	}
+	handleTimeUpdate(e) {
+		this.setState({ currentTime: e.target.currentTime })
+		const seek = document.getElementById('seek')
+		seek.value = e.target.currentTime
+		this.setState({ timeRemaining: this.getTimeRemaining({ currentTime: e.target.currentTime }) })
+	}
 	render = () => {
 		if (!this.props.songs || this.props.songs.length === 0) return <div>loading...</div>
 		else if (!this.state.currentSongSource) {
@@ -125,19 +164,51 @@ class Player extends Component {
 		} else
 			return (
 				<div>
-					<div>
-						<Repeat toggleRepeat={(repeat) => this.toggleRepeat(repeat)} repeat={this.state.repeat} />
-					</div>
-					<PrevSong prevSong={() => this.prevSong()} />
-					<PlayPause playing={this.state.playing} togglePlayPause={() => this.togglePlayPause()} />
-					<NextSong nextSong={() => this.nextSong()} />
-					<audio
-						onEnded={() => this.handleSongEnd()}
-						onCanPlayThrough={() => this.handleCanPlayThrough()}
-						onPlaying={() => this.handlePlaying()}
-						controls
-						src={this.state.currentSongSource}
+					<Songs
+						playSong={(i) => this.playSong(i)}
+						songs={this.props.songs}
+						currentSongIndex={this.props.currentSongIndex}
 					/>
+					<div id="player-wrapper">
+						<div id="player">
+							<div id="controls-left">
+								<PrevSong prevSong={() => this.prevSong()} />
+								<PlayPause
+									playing={this.state.playing}
+									togglePlayPause={() => this.togglePlayPause()}
+								/>
+								<NextSong nextSong={() => this.nextSong()} />
+							</div>
+							<div id="seek-display">
+								<div id="seek-wrapper">
+									<input
+										type="range"
+										id="seek"
+										min="0"
+										max="100"
+										defaultValue="0"
+										disabled={!this.state.canPlayThrough}
+										onChange={(e) => this.handleSeek(e)}
+									/>
+								</div>
+								<div id="time-remaining">-{this.state.timeRemaining}</div>
+							</div>
+							<div id="controls-right">
+								<Repeat
+									toggleRepeat={(repeat) => this.toggleRepeat(repeat)}
+									repeat={this.state.repeat}
+								/>
+							</div>
+							<audio
+								onEnded={() => this.handleSongEnd()}
+								onCanPlayThrough={() => this.handleCanPlayThrough()}
+								onPlaying={() => this.handlePlaying()}
+								src={this.state.currentSongSource}
+								onDurationChange={(e) => this.handleDurationChange(e)}
+								onTimeUpdate={(e) => this.handleTimeUpdate(e)}
+							/>
+						</div>
+					</div>
 				</div>
 			)
 	}
@@ -176,9 +247,6 @@ class Playlist extends Component {
 			}
 		})
 	}
-	componentDidUpdate() {
-		console.log(this.state.songs)
-	}
 	render() {
 		return (
 			<main>
@@ -187,8 +255,8 @@ class Playlist extends Component {
 				) : (
 					<div>
 						<h1>Playlist: {this.state.name}</h1>
-						<Songs songs={this.state.songs} currentSongIndex={this.state.currentSongIndex} />
 						<Player
+							currentSongIndex={this.state.currentSongIndex}
 							songs={this.state.songs}
 							dbx={this.props.dbx}
 							setCurrentSongIndex={(i) => this.setCurrentSongIndex(i)}
