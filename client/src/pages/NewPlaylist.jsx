@@ -37,7 +37,6 @@ class NewPlaylist extends Component {
 			e.target['playlist-name'].value = ''
 
 			const playlist = { name, songs }
-			console.log('adding', playlist)
 
 			const { account_id } = await this.props.dbx.usersGetCurrentAccount()
 			fetch(`http://localhost/api/${account_id}/playlists`, {
@@ -46,7 +45,7 @@ class NewPlaylist extends Component {
 				headers: { 'Content-Type': 'application/json' }
 			}).then(async (res) => {
 				const { _id } = await res.json()
-				console.log(res)
+				console.log('Playlist created', playlist)
 				this.setState({
 					added: true,
 					link: `/playlists/${_id}`
