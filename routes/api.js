@@ -1,33 +1,67 @@
 const router = require('express').Router()
 const User = require('../models/user')
 
-// router.get('/playlists', (req, res, next) => {
-// 	Playlist.find().then((data) => res.json(data)).catch(next)
-// })
+async function getLastPlaylistIndex(userIndex) {
+	let lastPlaylistIndex = 0
+	await User.findOne({ index: userIndex }, {}, { sort: { date: -1 } }).then(
+		(playlist) => (lastPlaylistIndex = playlist.index)
+	)
+	return lastPlaylistIndex
+}
 
-router.get('/:id/playlists', (req, res, next) => {
-	User.findOne({ dropboxId: req.params.id }).then((record) => res.json(record.playlists))
+async function getLastUserIndex() {
+	let lastUserIndex = 0
+	await User.findOne({}, {}, { sort: { date: -1 } }).then((user) => (lastUserIndex = user.index))
+	return lastUserIndex
+}
+
+// get playlists of user
+router.get('/:userId/playlists', (req, res, next) => {
+	User.findOne({ index: req.params.userId }).then((record) => res.json(record.playlists))
 })
 
-router.post('/users', (req, res, next) => {
-	User.create(req.body).then((data) => res.json(data))
+// create new playlist
+router.post('/:userId/playlists', async (req, res, next) => {
+	const userIndex = req.params.userId
+	const lastPlaylistIndex = await getLastPlaylistIndex(userIndex)
+	const playlist = req.body
+	playlist.index = lastPlaylistIndex + 1
+
+	User.findOne({ index: userIndex }).then((record) => {
+		record.playlists.push(playlist)
+		record.save()
+		res.json(record)
+	})
 })
 
-router.get('/playlists/last-index', (req, res, next) => {
-	// If catches, then first playlist is being added, and since it will increment this index, return 0
-	Playlist.findOne({}, {}, { sort: { date: -1 } }).then((data) => res.json(data.index)).catch(() => res.json(0))
+// create new user
+router.post('/users', async (req, res, next) => {
+	// add indexes to each playlist
+	if (req.body.playlists) {
+		req.body.playlists = req.body.playlists.map((playlist, i) => {
+			playlist.index = i + 1
+			return playlist
+		})
+	}
+	// add unused index to user
+	req.body.index = (await getLastUserIndex()) + 1
+	User.create(req.body).then((data) => res.json(data)).catch((err) => console.log(err))
 })
 
-router.get('/playlists/:id', (req, res, next) => {
-	Playlist.findOne({ index: req.params.id }).then((data) => res.json(data)).catch(next)
+// get a playlist by its id
+router.get('/:userId/playlists/:playlistId', (req, res, next) => {
+	const userIndex = req.params.userId
+	const playlistIndex = req.params.playlistId
+	User.findOne({ index: userIndex, 'playlists.index': playlistIndex }).then((record) => res.json(record))
 })
 
-router.post('/playlists', (req, res, next) => {
-	Playlist.create(req.body).then((data) => res.json(data)).catch(next)
-})
-
-router.delete('/playlists/:id', (req, res, next) => {
-	Playlist.findOneAndDelete({ index: req.params.id }).then((data) => res.json(data)).catch(next)
+// delete a playlist
+router.delete('/:userId/playlists/:playlistId', (req, res, next) => {
+	const userIndex = req.params.userId
+	const playlistIndex = req.params.playlistId
+	User.updateOne({ index: userIndex }, { $pull: { playlists: { index: playlistIndex } } })
+		.then((data) => res.json(data))
+		.catch(next)
 })
 
 module.exports = router
