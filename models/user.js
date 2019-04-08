@@ -5,14 +5,13 @@ const PlaylistSchema = new Schema({
 	name: { type: String, required: true },
 	date: { type: Date, default: Date.now },
 	songs: { type: Object, required: true },
-	index: { type: Number, required: true }
+	_id: { type: String, required: true }
 })
 
 const UserSchema = new Schema({
-	dropboxId: { type: String, required: true },
 	date: { type: Date, default: Date.now },
-	index: { type: Number, required: true },
-	playlists: [ PlaylistSchema ]
+	playlists: { type: [ PlaylistSchema ], default: [] },
+	_id: { type: String, required: true }
 })
 
 const User = mongoose.model('user', UserSchema)
