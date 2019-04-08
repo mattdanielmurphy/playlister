@@ -8,6 +8,13 @@ const PlaylistSchema = new Schema({
 	index: { type: Number, required: true }
 })
 
-const Playlist = mongoose.model('playlist', PlaylistSchema)
+const UserSchema = new Schema({
+	dropboxId: { type: String, required: true },
+	date: { type: Date, default: Date.now },
+	index: { type: Number, required: true },
+	playlists: [ PlaylistSchema ]
+})
 
-module.exports = Playlist
+const User = mongoose.model('user', UserSchema)
+
+module.exports = User

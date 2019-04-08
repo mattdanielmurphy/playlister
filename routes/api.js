@@ -1,8 +1,16 @@
 const router = require('express').Router()
-const Playlist = require('../models/playlist')
+const User = require('../models/user')
 
-router.get('/playlists', (req, res, next) => {
-	Playlist.find().then((data) => res.json(data)).catch(next)
+// router.get('/playlists', (req, res, next) => {
+// 	Playlist.find().then((data) => res.json(data)).catch(next)
+// })
+
+router.get('/:id/playlists', (req, res, next) => {
+	User.findOne({ dropboxId: req.params.id }).then((record) => res.json(record.playlists))
+})
+
+router.post('/users', (req, res, next) => {
+	User.create(req.body).then((data) => res.json(data))
 })
 
 router.get('/playlists/last-index', (req, res, next) => {
