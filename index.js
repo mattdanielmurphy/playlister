@@ -23,12 +23,14 @@ app.use((req, res, next) => {
 	next()
 })
 
+// don't move lower
+app.use(bodyParser.json())
+
 // must remain above catch-all for other routes below which are all sent to index, to be handled by react router
 app.use('/api', routes)
 
 // production mode
 if (process.env.NODE_ENV === 'production') {
-	console.log('production')
 	app.use(express.static(path.join(__dirname, 'client/build')))
 	app.get('*', (req, res) => res.sendFile('client/build/index.html', { root: __dirname }))
 }
@@ -37,8 +39,6 @@ if (process.env.NODE_ENV === 'production') {
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname + '/client/public/index.html'))
 })
-
-app.use(bodyParser.json())
 
 app.use((err, req, res, next) => {
 	console.log(err)
