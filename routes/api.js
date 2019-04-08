@@ -47,7 +47,11 @@ router.put('/:userId/playlists/:playlistId', (req, res, next) => {
 
 // get all playlists of user
 router.get('/:userId/playlists', ({ params }, res, next) => {
-	User.findById(params.userId).then((user) => res.json(user.playlists))
+	User.findById(params.userId).then((user) => {
+		// if no playlists return an empty array
+		playlists = user.playlists ? user.playlists : []
+		res.json(playlists)
+	})
 })
 
 // get a playlist by its id
