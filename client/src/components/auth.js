@@ -20,26 +20,35 @@ class Auth {
 		)
 		document.getElementById('authlink').href = authUrl
 	}
+	setupUserIfNoMatchingCookie = async (dbx) => {
+		// MUST ENCRYPT COOKIES BEFORE ANYONE USES THIS FOR IMPORTANT STUFF!!!
+		if (Cookies.get('accessToken' !== this.getAccessToken()) || !Cookies.get('accessToken')) {
+			Cookies.set('accessToken', this.getAccessToken())
+			const { account_id } = await dbx.usersGetCurrentAccount()
+			const newUser = { _id: account_id }
+			// will create new user if not already there
+			fetch('http://localhost/api/users', {
+				method: 'post',
+				body: JSON.stringify(newUser),
+				headers: { 'Content-Type': 'application/json' }
+			}).then(async (res) => {
+				res = await res.json()
+				if (res.error) console.log(res)
+				else console.log('New user created', account_id)
+			})
+		}
+	}
 	async authenticate() {
 		const dbx = new Dropbox({ accessToken: this.getAccessToken(), fetch })
-		let authenticated = false
-		const test = new Promise((resolve, reject) => {
-			dbx
-				.filesListFolder({ path: '' })
-				.then(() => {
-					// MUST ENCRYPT COOKIES BEFORE ANYONE USES THIS FOR IMPORTANT STUFF!!!
-					if (Cookies.get('accessToken' !== this.getAccessToken()) || !Cookies.get('accessToken'))
-						Cookies.set('accessToken', this.getAccessToken())
-					resolve()
-				})
-				.catch((err) => {
-					console.log(err)
-					reject('rejected')
-				})
-		})
-			.then(() => (authenticated = true))
-			.catch((err) => {})
-		await test
+		// let authenticated = false
+		let authenticated = await dbx
+			.filesListFolder({ path: '' })
+			.then(async () => {
+				authenticated = true
+				await this.setupUserIfNoMatchingCookie(dbx)
+				return true
+			})
+			.catch((err) => false)
 		return authenticated ? dbx : false
 	}
 }

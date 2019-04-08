@@ -62,14 +62,14 @@ router.get('/:userId/playlists/:playlistId', ({ params }, res, next) => {
 
 // create new user
 router.post('/users', async ({ body }, res, next) => {
-	// add IDs to each playlist
+	// add IDs to each playlist if playlists object provided
 	if (body.playlists) {
 		body.playlists = body.playlists.map((playlist, i) => {
 			playlist._id = i + 1
 			return playlist
 		})
 	}
-	User.create(body).then((data) => res.json(data)).catch((err) => console.log(err))
+	User.create(body).then((data) => res.json(data)).catch((err) => res.json({ error: err }))
 })
 
 module.exports = router
