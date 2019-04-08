@@ -9,9 +9,6 @@ const Header = () => (
 		<NavLink exact activeClassName="currentPage" to="/playlists/new">
 			New Playlist
 		</NavLink>
-		<NavLink exact activeClassName="currentPage" to="/add-songs">
-			Add Songs
-		</NavLink>
 	</nav>
 )
 

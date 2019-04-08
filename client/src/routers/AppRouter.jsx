@@ -6,7 +6,6 @@ import Authorize from '../pages/Authorize'
 import Playlists from '../pages/Playlists'
 import Playlist from '../pages/Playlist'
 import NewPlaylist from '../pages/NewPlaylist'
-import AddSongs from '../pages/AddSongs'
 import NotFound from '../pages/NotFound'
 
 import auth from '../components/auth'
@@ -29,7 +28,6 @@ class Routes extends Component {
 					path="/playlists/:id"
 					render={(routeProps) => <Playlist {...this.state} {...routeProps} />}
 				/>
-				{/* <Route exact path="/add-songs" component={AddSongs} /> */}
 				<Route component={NotFound} />
 			</Switch>
 		) : (
