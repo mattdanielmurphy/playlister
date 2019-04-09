@@ -25,14 +25,12 @@ class DropboxObj {
 			return url
 		})
 	authenticate = async (tokenOrHash) => {
-		console.log(tokenOrHash)
 		return await fetch('http://localhost/api/auth', {
 			method: 'post',
 			body: JSON.stringify(tokenOrHash),
 			headers: { 'Content-Type': 'application/json' }
 		}).then(async (res) => {
 			const accessToken = await res.json()
-			console.log(accessToken)
 			if (accessToken) this.accessToken = accessToken
 			return res
 		})

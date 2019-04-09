@@ -38,8 +38,6 @@ class Auth {
 			null,
 			'code'
 		)
-		// const tokenHash = cryptr.encrypt(accessToken)
-		// Cookies.set('tokenHash', tokenHash)
 	}
 	async authenticateToken(accessToken) {
 		const dbx = new Dropbox({
@@ -48,8 +46,7 @@ class Auth {
 		})
 		return await dbx
 			.filesListFolder({ path: '' })
-			.then(async (res) => {
-				console.log(res)
+			.then(async () => {
 				await this.setupUser(dbx)
 				return accessToken
 			})

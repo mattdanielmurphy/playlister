@@ -12,7 +12,6 @@ async function getLastPlaylistId(userId) {
 
 // dropbox
 router.get('/auth', async (req, res, next) => {
-	console.log('GET to /auth')
 	const code = req.query.code
 	if (code) {
 		const tokenHash = await auth.getHashTokenFromCode(code)
@@ -21,7 +20,6 @@ router.get('/auth', async (req, res, next) => {
 })
 
 router.post('/auth', async (req, res, next) => {
-	console.log('POST to /auth')
 	let token = req.body.token
 	const tokenHash = req.body.tokenHash
 	if (token) {
@@ -30,7 +28,6 @@ router.post('/auth', async (req, res, next) => {
 	} else if (tokenHash) {
 		token = auth.decryptTokenHash(tokenHash)
 		const accessToken = await auth.authenticateToken(token)
-		console.log('accessToken', accessToken)
 		res.json(accessToken)
 	}
 })

@@ -7,7 +7,6 @@ class Authorize extends Component {
 	}
 	authUrl = async () => {
 		const url = await dropbox.getAuthorizationUrl()
-		console.log(url)
 		this.setState({ url })
 	}
 	componentDidMount() {

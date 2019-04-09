@@ -41,7 +41,6 @@ class Auth {
 	async authenticate() {
 		const dbx = new Dropbox({ accessToken: this.getAccessToken(), fetch })
 		// let authenticated = false
-		console.log('auth')
 		let authenticated = await dbx
 			.filesListFolder({ path: '' })
 			.then(async () => {
