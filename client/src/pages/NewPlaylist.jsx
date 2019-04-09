@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Songs from '../components/Songs'
 import fetch from 'node-fetch'
 import mongoKey from 'mongo-key-escape'
+import dropbox from '../components/dropbox'
 
 class NewPlaylist extends Component {
 	state = {
@@ -38,7 +39,7 @@ class NewPlaylist extends Component {
 
 			const playlist = { name, songs }
 
-			const { account_id } = await this.props.dbx.usersGetCurrentAccount()
+			const { account_id } = await dropbox.getUser()
 			fetch(`http://localhost/api/${account_id}/playlists`, {
 				method: 'POST',
 				body: JSON.stringify(playlist),

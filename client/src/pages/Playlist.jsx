@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import fetch from 'node-fetch'
 import Player from '../components/Player'
+import dropbox from '../components/dropbox'
 
 class Playlist extends Component {
 	state = {
@@ -13,7 +14,7 @@ class Playlist extends Component {
 		this.setState({ currentSongIndex: i })
 	}
 	async componentDidMount() {
-		const { account_id } = await this.props.dbx.usersGetCurrentAccount()
+		const { account_id } = await dropbox.getUser()
 		fetch(`http://localhost/api/${account_id}/playlists/${this.state.id}`)
 			.then(async (res) => {
 				const { songs, name, date } = await res.json()
@@ -40,7 +41,6 @@ class Playlist extends Component {
 						<Player
 							currentSongIndex={this.state.currentSongIndex}
 							songs={this.state.songs}
-							dbx={this.props.dbx}
 							setCurrentSongIndex={(i) => this.setCurrentSongIndex(i)}
 						/>
 					</div>

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import Cookies from 'js-cookie'
+import parse from 'url-parse'
 
 import Header from '../components/Header'
 import Authorize from '../pages/Authorize'
@@ -7,27 +9,24 @@ import Playlists from '../pages/Playlists'
 import Playlist from '../pages/Playlist'
 import NewPlaylist from '../pages/NewPlaylist'
 import NotFound from '../pages/NotFound'
-
-import auth from '../components/auth'
+import dropbox from '../components/dropbox'
 
 class Routes extends Component {
-	state = { dbx: this.props.dbx }
 	render = () =>
-		this.state.dbx ? (
+		this.props.authenticated ? (
 			<Switch>
 				<Route exact path="/" render={() => <Redirect to="/playlists" />} />
-				<Route path="/auth" render={() => (this.state.dbx ? <Redirect to="/playlists" /> : <Authorize />)} />
-				<Route exact path="/playlists" render={(routeProps) => <Playlists {...this.state} {...routeProps} />} />
+				<Route
+					path="/auth"
+					render={() => (this.props.authenticated ? <Redirect to="/playlists" /> : <Authorize />)}
+				/>
+				<Route exact path="/playlists" render={(routeProps) => <Playlists {...routeProps} />} />
 				<Route
 					exact
 					path="/playlists/new"
 					render={(routeProps) => <NewPlaylist {...this.props} {...routeProps} />}
 				/>
-				<Route
-					exact
-					path="/playlists/:id"
-					render={(routeProps) => <Playlist {...this.state} {...routeProps} />}
-				/>
+				<Route exact path="/playlists/:id" render={(routeProps) => <Playlist {...routeProps} />} />
 				<Route component={NotFound} />
 			</Switch>
 		) : (
@@ -38,8 +37,19 @@ class Routes extends Component {
 }
 
 class AppRouter extends Component {
-	state = { loading: true, isAuthenticated: false }
-	componentDidMount = () => auth.authenticate().then((dbx) => this.setState({ loading: false, dbx }))
+	state = { loading: true, authenticated: false }
+	componentDidMount = async () => {
+		const tokenHash = Cookies.get('tokenHash') || parse(window.location.href, true).query.tokenHash
+		if (tokenHash) {
+			dropbox.authenticate({ tokenHash }).then((authenticated) => {
+				this.setState({ loading: false, authenticated })
+				if (authenticated) Cookies.set('tokenHash', tokenHash)
+			})
+		} else {
+			this.setState({ loading: false, authenticated: false })
+		}
+	}
+
 	render = () => {
 		if (this.state.loading) return <div id="loading">Loading...</div>
 		else
@@ -47,7 +57,7 @@ class AppRouter extends Component {
 				<Router>
 					<div>
 						<Header />
-						<Routes dbx={this.state.dbx} />
+						<Routes authenticated={this.state.authenticated} />
 					</div>
 				</Router>
 			)

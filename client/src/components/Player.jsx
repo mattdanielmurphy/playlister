@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { FaVolume, FaForward, FaPlay, FaPause, FaBackward } from 'react-icons/fa'
 import { FiRepeat } from 'react-icons/fi'
+import dropbox from './dropbox'
 
 const Songs = ({ songs, currentSongIndex, playSong }) => {
 	return (
@@ -45,10 +46,9 @@ const PrevSong = (props) => (
 class Player extends Component {
 	state = { repeat: false, currentTime: 0, timeRemaining: '-:--' }
 	async setSongSource(index) {
-		let currentSongSource
 		let currentSong = this.props.songs[index]
 		const songPath = currentSong.path_lower
-		await this.props.dbx.filesGetTemporaryLink({ path: songPath }).then(({ link }) => (currentSongSource = link))
+		let currentSongSource = await dropbox.getTempLink(songPath)
 		this.setState({ currentSongSource, canPlayThrough: false })
 		return true
 	}

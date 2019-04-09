@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
+import dropbox from './dropbox'
 import Song from './Song'
-import getSongs from './getSongs'
 
 class Songs extends Component {
 	state = {
 		songs: []
 	}
 	componentDidMount() {
-		getSongs(this.props).then((songs) => this.setState({ songs }))
+		dropbox.getSongs().then((songs) => this.setState({ songs }))
 	}
 	render = () => (
 		<main>

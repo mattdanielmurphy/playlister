@@ -1,14 +1,22 @@
 import React, { Component } from 'react'
-import fetch from 'node-fetch'
-import { Dropbox } from 'dropbox'
+import dropbox from '../components/dropbox'
 
 class Authorize extends Component {
-	authUrl = () =>
-		new Dropbox({ clientId: 'kp2273iqykx8esz', fetch }).getAuthenticationUrl('http://localhost:3000/auth')
+	state = {
+		url: ''
+	}
+	authUrl = async () => {
+		const url = await dropbox.getAuthorizationUrl()
+		console.log(url)
+		this.setState({ url })
+	}
+	componentDidMount() {
+		this.authUrl()
+	}
 	render = () => (
 		<main>
 			<h1>Authorization Required</h1>
-			<a href={this.authUrl()}>Click here to authorize.</a>
+			{this.state.url && <a href={this.state.url}>Click here to authorize.</a>}
 		</main>
 	)
 }

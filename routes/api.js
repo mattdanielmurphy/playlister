@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const User = require('../models/user')
+const auth = require('./auth')
 
 async function getLastPlaylistId(userId) {
 	let lastPlaylistId = 0
@@ -8,6 +9,36 @@ async function getLastPlaylistId(userId) {
 	})
 	return lastPlaylistId
 }
+
+// dropbox
+router.get('/auth', async (req, res, next) => {
+	console.log('GET to /auth')
+	const code = req.query.code
+	if (code) {
+		const tokenHash = await auth.getHashTokenFromCode(code)
+		res.redirect(`http://localhost:3000/?tokenHash=${tokenHash}`)
+	}
+})
+
+router.post('/auth', async (req, res, next) => {
+	console.log('POST to /auth')
+	let token = req.body.token
+	const tokenHash = req.body.tokenHash
+	if (token) {
+		const accessToken = await auth.authenticateToken(token)
+		res.json(accessToken)
+	} else if (tokenHash) {
+		token = auth.decryptTokenHash(tokenHash)
+		const accessToken = await auth.authenticateToken(token)
+		console.log('accessToken', accessToken)
+		res.json(accessToken)
+	}
+})
+
+router.get('/get-auth-url', async (req, res, next) => {
+	const url = await auth.getAuthorizationUrl()
+	res.json({ url })
+})
 
 // create new playlist
 router.post('/:userId/playlists', async (req, res, next) => {

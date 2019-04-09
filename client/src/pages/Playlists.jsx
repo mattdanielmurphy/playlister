@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import fetch from 'node-fetch'
+import dropbox from '../components/dropbox'
 
 const Playlist = ({ playlist }) => (
 	<div>
@@ -26,7 +27,7 @@ class Playlists extends Component {
 		playlists: []
 	}
 	async componentDidMount() {
-		const { account_id } = await this.props.dbx.usersGetCurrentAccount()
+		const { account_id } = await dropbox.getUser()
 		fetch(`http://localhost/api/${account_id}/playlists`).then(async (res) => {
 			const playlist = await res.json()
 			if (playlist.length === 0) this.setState({ noPlaylists: true })

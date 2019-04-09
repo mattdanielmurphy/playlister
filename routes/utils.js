@@ -36,4 +36,4 @@ function parseQueryString(str) {
 	return ret
 }
 
-export { parseQueryString }
+module.exports = parseQueryString
