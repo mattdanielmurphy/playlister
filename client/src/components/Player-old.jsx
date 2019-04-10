@@ -91,17 +91,17 @@ class Player extends Component {
 	}
 	nextSong() {
 		this.sound.stop()
-		this.setState({ isLoaded: false, timeRemaining: '-:--' })
+		this.setState({ canPlayThrough: false, timeRemaining: '-:--' })
 		const currentSongIndex = this.getNextSongIndex()
 		this.props.setCurrentSongIndex(currentSongIndex)
-		this.loadAudio(this.state.songSources[currentSongIndex])
+		this.loadAudio(this.props.songs[currentSongIndex])
 	}
 	prevSong() {
 		this.sound.stop()
-		this.setState({ isLoaded: false, timeRemaining: '-:--' })
+		this.setState({ canPlayThrough: false, timeRemaining: '-:--' })
 		const currentSongIndex = this.getPrevSongIndex()
 		this.props.setCurrentSongIndex(currentSongIndex)
-		this.loadAudio(this.state.songSources[currentSongIndex])
+		this.loadAudio(this.props.songs[currentSongIndex])
 	}
 	playSong(index) {
 		this.props.setCurrentSongIndex(index)
@@ -112,12 +112,11 @@ class Player extends Component {
 		this.setState({ repeat: !this.state.repeat })
 	}
 	play() {
-		if (this.state.isLoaded) {
-			this.sound.play()
-			this.setState({ continuePlaying: true })
-			if (this.state.playWhenReady) this.setState({ playWhenReady: false })
+		this.sound.play()
+		if (this.state.canPlayThrough) {
+			this.setState({ playing: true })
 		} else {
-			this.setState({ playWhenReady: true })
+			this.setState({ waitingToPlay: true })
 		}
 	}
 	pause() {
@@ -143,6 +142,7 @@ class Player extends Component {
 	//
 	handleOnPlay = () => {
 		this.setState({ playing: true, continuePlaying: true })
+		this.startTimeInterval()
 	}
 	handleOnStop = () => {
 		this.stopTimeInterval()
@@ -153,16 +153,20 @@ class Player extends Component {
 		const seek = document.getElementById('seek')
 		seek.max = duration
 		const currentTime = 0
-		this.startTimeInterval()
 		this.setState({
 			currentSongDuration: duration,
 			timeRemaining: this.getTimeRemaining({ duration, currentTime }),
-			canPlayThrough: true,
-			isLoaded: true
+			canPlayThrough: true
 		})
-		if (this.state.playWhenReady && !this.sound.playing()) this.play()
-		else if (this.state.continuePlaying) this.play()
-		else this.pause()
+		if (this.state.continuePlaying && !this.sound.playing()) {
+			this.play()
+		} else if (this.state.waitingToPlay && !this.sound.playing()) {
+			console.log('playing')
+			this.setState({ waitingToPlay: false })
+			this.play()
+		} else {
+			this.pause()
+		}
 	}
 	handleSongEnd() {
 		this.nextSong()

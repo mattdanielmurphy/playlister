@@ -38,16 +38,17 @@ class Routes extends Component {
 
 class AppRouter extends Component {
 	state = { loading: true, authenticated: false }
-	componentDidMount = async () => {
+	authenticate(tokenHash) {
+		console.log('tokenHash:', tokenHash)
+		dropbox.authenticate({ tokenHash }).then((authenticated) => {
+			this.setState({ loading: false, authenticated })
+			if (authenticated) Cookies.set('tokenHash', tokenHash)
+		})
+	}
+	componentDidMount = () => {
 		const tokenHash = Cookies.get('tokenHash') || parse(window.location.href, true).query.tokenHash
-		if (tokenHash) {
-			dropbox.authenticate({ tokenHash }).then((authenticated) => {
-				this.setState({ loading: false, authenticated })
-				if (authenticated) Cookies.set('tokenHash', tokenHash)
-			})
-		} else {
-			this.setState({ loading: false, authenticated: false })
-		}
+		if (tokenHash) this.authenticate(tokenHash)
+		else this.setState({ loading: false, authenticated: false })
 	}
 
 	render = () => {

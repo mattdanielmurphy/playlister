@@ -34,7 +34,6 @@ class DropboxObj {
 			if (accessToken) this.accessToken = accessToken
 			return res
 		})
-		// Cookies.set('accessToken', this.getAccessToken())
 	}
 }
 

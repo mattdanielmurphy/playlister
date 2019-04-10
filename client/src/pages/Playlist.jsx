@@ -37,7 +37,7 @@ class Playlist extends Component {
 					<h1>{this.state.error}</h1>
 				) : (
 					<div>
-						<h1>Playlist: {this.state.name}</h1>
+						<h1>{this.state.name}</h1>
 						<Player
 							currentSongIndex={this.state.currentSongIndex}
 							songs={this.state.songs}
