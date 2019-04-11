@@ -5,7 +5,8 @@ class Song extends Component {
 		this.props.removeSongFromPlaylist()
 	}
 	handleClick(e) {
-		if (e.target.className === 'selected') this.removeSongFromPlaylist(e)
+		console.log(e.target)
+		if (e.target.classList.contains('selected')) this.removeSongFromPlaylist(e)
 		else this.props.addSongToPlaylist()
 		e.target.classList.toggle('selected')
 	}
