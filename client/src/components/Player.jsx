@@ -1,21 +1,8 @@
 import React, { Component } from 'react'
-import { FaVolume } from 'react-icons/fa'
 import dropbox from './dropbox'
 import { Howl, Howler } from 'howler'
 import Controls from '../components/Controls'
-
-const Songs = ({ songs, currentSongIndex, playSong }) => {
-	return (
-		<ol>
-			{songs.map((song, i) => (
-				<li className="song" key={i} onClick={() => playSong(i)}>
-					<div className="now-playing">{currentSongIndex === i && <FaVolume />}</div>
-					{song.name}
-				</li>
-			))}
-		</ol>
-	)
-}
+import PlayerSongs from './PlayerSongs'
 
 class Player extends Component {
 	state = {
@@ -95,6 +82,9 @@ class Player extends Component {
 		const currentSongIndex = this.getNextSongIndex()
 		this.props.setCurrentSongIndex(currentSongIndex)
 		this.loadAudio(this.state.songSources[currentSongIndex])
+		// set current time to 0
+		const seek = document.getElementById('seek')
+		seek.value = 0
 	}
 	prevSong() {
 		this.sound.stop()
@@ -104,6 +94,7 @@ class Player extends Component {
 		this.loadAudio(this.state.songSources[currentSongIndex])
 	}
 	playSong(index) {
+		this.state.songSources[this.state.currentSongIndex].stop()
 		this.props.setCurrentSongIndex(index)
 		if (this.state.songSources[index]) this.play()
 		else this.setSongSource(index).then(() => this.play())
@@ -183,19 +174,18 @@ class Player extends Component {
 			else if (e.key === 'ArrowLeft') this.prevSong()
 		}
 	}
-	handleKeyUp = (e) => {
-		this.keyHeld = false
-	}
+	handleKeyUp = (e) => (this.keyHeld = false)
 	handleKeyboardControls() {
 		window.addEventListener('keydown', (e) => this.handleKeyDown(e))
 		window.addEventListener('keyup', (e) => this.handleKeyUp(e))
 	}
 	//
-	// Component State Stuff
+	// Lifecycle Methods
 	//
 	componentWillUnmount() {
 		window.removeEventListener('keydown', (e) => this.handleKeyDown(e))
 		window.removeEventListener('keyup', (e) => this.handleKeyUp(e))
+		this.stopTimeInterval()
 	}
 	componentDidUpdate() {
 		if (!this.state.songSources[0]) this.preloadSongSources()
@@ -207,7 +197,7 @@ class Player extends Component {
 			this.handleKeyboardControls()
 			return (
 				<div>
-					<Songs
+					<PlayerSongs
 						playSong={(i) => this.playSong(i)}
 						songs={this.props.songs}
 						currentSongIndex={this.props.currentSongIndex}
