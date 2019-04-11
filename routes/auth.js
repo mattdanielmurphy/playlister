@@ -28,8 +28,10 @@ class Auth {
 			headers: { 'Content-Type': 'application/json' }
 		}).then(async (res) => {
 			res = await res.json()
-			if (res.error) console.log(res.error)
-			else console.log('New user created', account_id)
+			if (res.error) {
+				// don't display error if duplicate key error (try to create new user but user already exists)
+				if (!res.error.errmsg.includes('E11000')) console.log(res.error)
+			} else console.log('New user created', account_id)
 		})
 	}
 	async getAuthorizationUrl() {
