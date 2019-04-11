@@ -3,11 +3,13 @@ import Songs from '../components/Songs'
 import fetch from 'node-fetch'
 import mongoKey from 'mongo-key-escape'
 import dropbox from '../components/dropbox'
+import { Button, Form } from 'semantic-ui-react'
 
 class NewPlaylist extends Component {
 	state = {
 		playlist: { songs: {} },
-		error: undefined
+		error: undefined,
+		loading: false
 	}
 	addSongToPlaylist(song) {
 		const playlist = this.state.playlist
@@ -18,6 +20,26 @@ class NewPlaylist extends Component {
 		const playlist = this.state.playlist
 		delete playlist.songs[song.id]
 		this.setState({ playlist })
+	}
+	async createPlaylist(name, songs) {
+		this.setState({ loading: true })
+		const playlist = { name, songs }
+		const { account_id } = await dropbox.getUser()
+		fetch(`http://localhost/api/${account_id}/playlists`, {
+			method: 'POST',
+			body: JSON.stringify(playlist),
+			headers: { 'Content-Type': 'application/json' }
+		}).then(async (res) => {
+			const { _id } = await res.json()
+			console.log('Playlist created', playlist)
+			this.setState({
+				added: true,
+				link: `/playlists/${_id}`,
+				loading: false
+			})
+		})
+
+		if (this.state.error) this.setState({ error: undefined })
 	}
 	async handleSubmit(e) {
 		e.preventDefault()
@@ -36,24 +58,7 @@ class NewPlaylist extends Component {
 			this.setState({ error: 'Error: Playlist must have a name.' })
 		} else {
 			e.target['playlist-name'].value = ''
-
-			const playlist = { name, songs }
-
-			const { account_id } = await dropbox.getUser()
-			fetch(`http://localhost/api/${account_id}/playlists`, {
-				method: 'POST',
-				body: JSON.stringify(playlist),
-				headers: { 'Content-Type': 'application/json' }
-			}).then(async (res) => {
-				const { _id } = await res.json()
-				console.log('Playlist created', playlist)
-				this.setState({
-					added: true,
-					link: `/playlists/${_id}`
-				})
-			})
-
-			if (this.state.error) this.setState({ error: undefined })
+			this.createPlaylist(name, songs)
 		}
 	}
 	error() {
@@ -67,16 +72,18 @@ class NewPlaylist extends Component {
 				addSongToPlaylist={(song) => this.addSongToPlaylist(song)}
 				removeSongFromPlaylist={(song) => this.removeSongFromPlaylist(song)}
 			/>
-			<form id="create-playlist" onSubmit={(e) => this.handleSubmit(e)}>
+			<Form id="create-playlist" onSubmit={(e) => this.handleSubmit(e)}>
 				{this.state.error && this.error()}
 				{this.state.added && (
 					<p>
 						Playlist created! Listen to it <a href={this.state.link}>here</a>.
 					</p>
 				)}
-				<input type="text" name="playlist-name" placeholder="Playlist Title" />
-				<button>Create playlist</button>
-			</form>
+				<Form.Group>
+					<Form.Input type="text" name="playlist-name" placeholder="Playlist Title" />
+					<Button loading={this.state.loading}>Create playlist</Button>
+				</Form.Group>
+			</Form>
 		</main>
 	)
 }

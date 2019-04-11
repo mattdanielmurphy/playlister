@@ -12,10 +12,15 @@
 	}
 }
 
+.error {
+	margin: .5em;
+	color: #ca1a1a;
+}
+
 .song {
 	font-size: .9em;
-	padding: .3em .5em;
-	border-bottom: 2px solid white;
+	padding: .2em .5em;
+	border-bottom: 1px solid #fff;
 	transition: .15s;
 	&:last-of-type {
 		border: none;
@@ -31,5 +36,23 @@
 		}
 		font-weight: bold;
 		background: lighten($blue, 30);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.song {
+		color: #eee;
+		border-bottom: 1px solid #000;
+		&.selected {
+			background: desaturate(darken($blue, 37), 30);
+			color: #eee;
+			&:hover {
+				background: desaturate(darken($blue, 42), 30);
+				color: #eee;
+			}
+		}
+	}
+	.error {
+		color: desaturate(darken(#ca1a1a, 2), 10);
 	}
 }

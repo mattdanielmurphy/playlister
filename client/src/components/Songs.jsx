@@ -26,4 +26,5 @@ class Songs extends Component {
 		</main>
 	)
 }
+
 export default Songs
