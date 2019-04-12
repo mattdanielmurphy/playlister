@@ -10,7 +10,6 @@
 		"node-fetch": "^2.3.0",
 		"node-sass": "^4.11.0",
 		"react": "^16.8.6",
-		"react-confirm-alert": "^2.4.0",
 		"react-dom": "^16.8.6",
 		"react-icons": "^3.5.0",
 		"react-pose": "^4.0.8",
@@ -28,10 +27,5 @@
 	"eslintConfig": {
 		"extends": "react-app"
 	},
-	"browserslist": [
-		">0.2%",
-		"not dead",
-		"not ie <= 11",
-		"not op_mini all"
-	]
+	"browserslist": [ ">0.2%", "not dead", "not ie <= 11", "not op_mini all" ]
 }
