@@ -31,7 +31,12 @@ class Routes extends Component {
 			</Switch>
 		) : (
 			<Switch>
-				<Route path="/" component={Authorize} />
+				<Route exact path="/" component={Authorize} />
+				<Route exact path="/auth" component={Authorize} />
+				<Route exact path="/playlists" component={Authorize} />
+				<Route exact path="/playlists/new" component={Authorize} />
+				<Route exact path="/playlists/:id" render={(routeProps) => <Playlist {...routeProps} />} />
+				<Route component={NotFound} />
 			</Switch>
 		)
 }

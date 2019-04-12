@@ -8,12 +8,17 @@ const PlaylistSchema = new Schema({
 	_id: { type: String, required: true }
 })
 
+const PlaylistReferenceSchema = new Schema({
+	_id: { type: String, required: true }
+})
+
 const UserSchema = new Schema({
 	date: { type: Date, default: Date.now },
-	playlists: { type: [ PlaylistSchema ], default: [] },
+	playlists: { type: [ PlaylistReferenceSchema ], default: [] },
 	_id: { type: String, required: true }
 })
 
 const User = mongoose.model('user', UserSchema)
+const Playlist = mongoose.model('playlist', PlaylistSchema)
 
-module.exports = User
+module.exports = { User, Playlist }

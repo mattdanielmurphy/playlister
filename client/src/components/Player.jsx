@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import dropbox from './dropbox'
-import { Howl, Howler } from 'howler'
+import { Howl } from 'howler'
 import Controls from '../components/Controls'
 import PlayerSongs from './PlayerSongs'
 
@@ -10,118 +9,60 @@ class Player extends Component {
 		currentTime: 0,
 		timeRemaining: '-:--',
 		songSources: [],
-		canPlayThrough: false
+		canPlayThrough: false,
+		songLoading: true
 	}
-	async setSongSource(index) {
-		const songPath = this.props.songs[index].path_lower
-		const songSources = this.state.songSources
-		songSources[index] = await dropbox.getTempLink(songPath)
-		this.setState({ songSources })
-		return songSources[index]
-	}
-	async preloadSongSources() {
-		// without this an infinite loop occurs
-		if (!this.state.preloading) {
-			let max = this.props.songs.length - 1
-			this.setState({ preloading: true })
-			this.setSongSource(0).then((src) => this.loadAudio(src))
-			for (let i = 1; i <= max; i += 1) this.setSongSource(i)
-		}
-	}
-	loadAudio(src) {
-		this.sound = new Howl({
-			src,
+	loadAudio(currentSongIndex = this.props.currentSongIndex) {
+		const songs = this.props.songs
+		const currentSong = songs[currentSongIndex]
+		currentSong.sound = new Howl({
+			src: currentSong.source,
 			format: 'mp3',
 			preload: true,
 			onload: () => this.handleOnLoad(),
-			onend: () => this.handleSongEnd(),
+			onend: () => this.skip('next'),
 			onplay: () => this.handleOnPlay(),
 			onstop: () => this.handleOnStop()
 		})
+		this.props.setPlaylistState({ songs })
+		if (this._isMounted) this.setState({ currentSong })
 	}
-	startTimeInterval() {
-		this.timeInterval = setInterval(() => {
-			this.handleTimeUpdate()
-		}, 1000)
-	}
-	stopTimeInterval() {
-		clearInterval(this.timeInterval)
-	}
-	getNextSongIndex() {
-		const lastSongIndex = this.props.songs.length - 1
-		const lastSongOfPlaylist = this.props.currentSongIndex === lastSongIndex
-		let currentSongIndex = lastSongOfPlaylist ? 0 : this.props.currentSongIndex + 1
-		// continue playing is set to true only if it's not the last song in the playlist && repeat is on && is already true
-		const continuePlayingIfAlreadyPlaying = this.state.continuePlaying ? true : false
-		let continuePlaying = lastSongOfPlaylist && !this.state.repeat ? false : continuePlayingIfAlreadyPlaying
-		this.setState({ continuePlaying })
-		this.props.setCurrentSongIndex(currentSongIndex)
-		return currentSongIndex
-	}
-	getPrevSongIndex() {
-		const lastSongIndex = this.props.songs.length - 1
-		const firstSongIndex = 0
-		const firstSongOfPlaylist = this.props.currentSongIndex === firstSongIndex
-		let currentSongIndex = firstSongOfPlaylist ? lastSongIndex : this.props.currentSongIndex - 1
-		this.setState({ currentSongIndex })
-		this.props.setCurrentSongIndex(currentSongIndex)
-		return currentSongIndex
-	}
+	startTimeInterval = () => (this.timeInterval = setInterval(() => this.handleTimeUpdate(), 1000))
+	stopTimeInterval = () => clearInterval(this.timeInterval)
 	skip(direction) {
-		let index = 0
-		if (direction === 'prev') {
-			index = this.state.currentSongIndex - 1
-			if (index < 0) {
-				index = this.props.songs.length - 1
-			}
-		}
+		let index = direction === 'prev' ? this.props.currentSongIndex - 1 : this.props.currentSongIndex + 1
+		if (index < 0) index = this.props.songs.length - 1
+		else if (index > this.props.songs.length - 1) index = 0
+		this.changeSong(index)
 	}
-	nextSong() {
-		this.sound.stop()
-		this.setState({ isLoaded: false, timeRemaining: '-:--' })
-		const currentSongIndex = this.getNextSongIndex()
-		this.props.setCurrentSongIndex(currentSongIndex)
-		this.loadAudio(this.state.songSources[currentSongIndex])
-		// set current time to 0
+	changeSong(currentSongIndex) {
+		this.state.currentSong.sound.stop()
+		if (this._isMounted) this.setState({ songLoading: true, timeRemaining: '-:--' })
+		this.props.setPlaylistState({ currentSongIndex })
+		this.loadAudio(currentSongIndex)
 		const seek = document.getElementById('seek')
 		seek.value = 0
 	}
-	prevSong() {
-		this.sound.stop()
-		this.setState({ isLoaded: false, timeRemaining: '-:--' })
-		const currentSongIndex = this.getPrevSongIndex()
-		this.props.setCurrentSongIndex(currentSongIndex)
-		this.loadAudio(this.state.songSources[currentSongIndex])
+	playSong(currentSongIndex) {
+		this.state.currentSong.sound.stop()
+		this.props.setPlaylistState({ currentSongIndex })
+		this.state.currentSong.sound.play()
 	}
-	playSong(index) {
-		this.state.songSources[this.state.currentSongIndex].stop()
-		this.props.setCurrentSongIndex(index)
-		if (this.state.songSources[index]) this.play()
-		else this.setSongSource(index).then(() => this.play())
-	}
-	toggleRepeat() {
-		this.setState({ repeat: !this.state.repeat })
-	}
+	toggleRepeat = () => (this._isMounted ? this.setState({ repeat: !this.state.repeat }) : null)
 	play() {
-		if (this.state.isLoaded) {
-			this.sound.play()
-			this.setState({ continuePlaying: true })
-			if (this.state.playWhenReady) this.setState({ playWhenReady: false })
+		if (this.state.loading) {
+			if (this._isMounted) this.setState({ playWhenReady: true })
 		} else {
-			this.setState({ playWhenReady: true })
+			this.state.currentSong.sound.play()
+			if (this._isMounted) this.setState({ continuePlaying: true })
+			if (this.state.playWhenReady) this.setState({ playWhenReady: false })
 		}
 	}
 	pause() {
-		this.setState({ playing: false })
-		this.sound.pause()
+		if (this._isMounted) this.setState({ playing: false })
+		this.state.currentSong.sound.pause()
 	}
-	togglePlayPause() {
-		if (this.state.playing) {
-			this.pause()
-		} else {
-			this.play()
-		}
-	}
+	togglePlayPause = () => (this.state.playing ? this.pause() : this.play())
 	getTimeRemaining({ duration = this.state.currentSongDuration, currentTime = this.state.currentTime }) {
 		const totalSecs = Math.floor(duration - currentTime)
 		const secsRemaining = totalSecs % 60
@@ -133,45 +74,50 @@ class Player extends Component {
 	// HANDLERS
 	//
 	handleOnPlay = () => {
-		this.setState({ playing: true, continuePlaying: true })
+		if (this._isMounted) this.setState({ playing: true, continuePlaying: true })
 	}
 	handleOnStop = () => {
 		this.stopTimeInterval()
-		this.setState({ playing: false })
+		if (this._isMounted) this.setState({ playing: false })
 	}
 	handleOnLoad() {
-		const duration = this.sound.duration()
+		const duration = this.state.currentSong.sound.duration()
 		const seek = document.getElementById('seek')
+		if (!seek) return null
 		seek.max = duration
 		const currentTime = 0
 		this.startTimeInterval()
-		this.setState({
-			currentSongDuration: duration,
-			timeRemaining: this.getTimeRemaining({ duration, currentTime }),
-			canPlayThrough: true,
-			isLoaded: true
-		})
-		if (this.state.playWhenReady && !this.sound.playing()) this.play()
+		if (this._isMounted)
+			this.setState({
+				songLoading: false,
+				currentSongDuration: duration,
+				timeRemaining: this.getTimeRemaining({ duration, currentTime }),
+				canPlayThrough: true
+			})
+		if (this.state.playWhenReady && !this.state.currentSong.sound.playing()) this.play()
 		else if (this.state.continuePlaying) this.play()
 		else this.pause()
 	}
-	handleSongEnd() {
-		this.nextSong()
-	}
-	handleSeek = (e) => this.sound.seek(e.target.value)
+	handleSeek = (e) => this.state.currentSong.sound.seek(e.target.value)
 	handleTimeUpdate() {
-		this.setState({ currentTime: this.sound.seek() })
+		if (this._isMounted) this.setState({ currentTime: this.state.currentSong.sound.seek() })
 		const seek = document.getElementById('seek')
-		seek.value = this.sound.seek()
-		this.setState({ timeRemaining: this.getTimeRemaining({ currentTime: this.sound.seek() }) })
+		if (!seek) return null
+		seek.value = this.state.currentSong.sound.seek()
+		if (this._isMounted)
+			this.setState({
+				timeRemaining: this.getTimeRemaining({
+					currentTime: this.state.currentSong.sound.seek()
+				})
+			})
 	}
 	// KEYBOARD HANDLERS
 	handleKeyDown = (e) => {
 		if (!this.keyHeld) {
 			this.keyHeld = true
 			if (e.key === ' ') this.state.playing ? this.pause() : this.play()
-			else if (e.key === 'ArrowRight') this.nextSong()
-			else if (e.key === 'ArrowLeft') this.prevSong()
+			else if (e.key === 'ArrowRight') this.skip('next')
+			else if (e.key === 'ArrowLeft') this.skip('prev')
 		}
 	}
 	handleKeyUp = (e) => (this.keyHeld = false)
@@ -183,40 +129,42 @@ class Player extends Component {
 	// Lifecycle Methods
 	//
 	componentWillUnmount() {
+		this._isMounted = false
+		this.state.currentSong.sound.off()
+		this.state.currentSong.sound.unload()
+		// onload: () => this.handleOnLoad(),
+		// 	onend: () => this.skip('next'),
+		// 	onplay: () => this.handleOnPlay(),
+		// 	onstop: () => this.handleOnStop()
+		this.stopTimeInterval()
 		window.removeEventListener('keydown', (e) => this.handleKeyDown(e))
 		window.removeEventListener('keyup', (e) => this.handleKeyUp(e))
-		this.stopTimeInterval()
 	}
-	componentDidUpdate() {
-		if (!this.state.songSources[0]) this.preloadSongSources()
+	componentDidMount = () => {
+		this._isMounted = true
+		this.loadAudio()
+		this.handleKeyboardControls()
 	}
-	render = () => {
-		if (!this.props.songs || this.props.songs.length === 0 || !this.state.songSources[0])
-			return <div>loading...</div>
-		else {
-			this.handleKeyboardControls()
-			return (
-				<div>
-					<PlayerSongs
-						playSong={(i) => this.playSong(i)}
-						songs={this.props.songs}
-						currentSongIndex={this.props.currentSongIndex}
-					/>
-					<Controls
-						playing={this.state.playing}
-						canPlayThrough={this.state.canPlayThrough}
-						timeRemaining={this.state.timeRemaining}
-						repeat={this.state.repeat}
-						togglePlayPause={() => this.togglePlayPause()}
-						prevSong={() => this.prevSong()}
-						nextSong={() => this.nextSong()}
-						handleSeek={(e) => this.handleSeek(e)}
-						toggleRepeat={(repeat) => this.toggleRepeat(repeat)}
-					/>
-				</div>
-			)
-		}
-	}
+	render = () => (
+		<div>
+			<PlayerSongs
+				playSong={(i) => this.playSong(i)}
+				songs={this.props.songs}
+				currentSongIndex={this.props.currentSongIndex}
+			/>
+			<Controls
+				songLoading={this.state.songLoading}
+				playing={this.state.playing}
+				canPlayThrough={this.state.canPlayThrough}
+				timeRemaining={this.state.timeRemaining}
+				repeat={this.state.repeat}
+				togglePlayPause={() => this.togglePlayPause()}
+				skip={(direction) => this.skip(direction)}
+				handleSeek={(e) => this.handleSeek(e)}
+				toggleRepeat={(repeat) => this.toggleRepeat(repeat)}
+			/>
+		</div>
+	)
 }
 
 export default Player

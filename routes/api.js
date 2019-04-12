@@ -1,14 +1,16 @@
 const router = require('express').Router()
-const User = require('../models/user')
+const { Playlist, User } = require('../models/user')
 const auth = require('./auth')
+const uuid = require('short-uuid')
+const mongoose = require('mongoose')
 
-async function getLastPlaylistId(userId) {
-	let lastPlaylistId = 0
-	await User.findById(userId).then(({ playlists }) => {
-		lastPlaylistId = playlists.length > 0 ? playlists[playlists.length - 1]._id : 0
-	})
-	return lastPlaylistId
-}
+// async function getLastPlaylistId(userId) {
+// 	let lastPlaylistId = 0
+// 	await User.findById(userId).then(({ playlists }) => {
+// 		lastPlaylistId = playlists.length > 0 ? playlists[playlists.length - 1]._id : 0
+// 	})
+// 	return lastPlaylistId
+// }
 
 // dropbox
 router.get('/auth', async (req, res, next) => {
@@ -40,21 +42,22 @@ router.get('/get-auth-url', async (req, res, next) => {
 // create new playlist
 router.post('/:userId/playlists', async (req, res, next) => {
 	const userId = req.params.userId
-	const lastPlaylistId = await getLastPlaylistId(userId)
 	const playlist = req.body
-	playlist._id = Number(lastPlaylistId) + 1
+	playlist._id = uuid.generate()
 
 	User.findById(userId).then((user) => {
-		user.playlists.push(playlist)
+		user.playlists.push({ _id: playlist._id })
 		user.save()
-		res.json(playlist)
+		console.log('created playlist', playlist)
 	})
+	Playlist.create(playlist).then((data) => res.json(data)).catch((err) => res.json({ error: err }))
 })
 
 // delete a playlist
-router.delete('/:userId/playlists/:playlistId', ({ params }, res, next) => {
-	const userId = params.userId
-	const playlistId = params.playlistId
+router.delete('/:userId/playlists/:playlistId', (req, res, next) => {
+	const userId = req.params.userId
+	const playlistId = req.params.playlistId
+	const tokenHash = req.body.tokenHash
 	User.updateOne({ _id: userId }, { $pull: { playlists: { _id: playlistId } } })
 		.then((data) => res.json(data))
 		.catch(next)
@@ -75,21 +78,27 @@ router.put('/:userId/playlists/:playlistId', (req, res, next) => {
 
 // get all playlists of user
 router.get('/:userId/playlists', ({ params }, res, next) => {
+	let playlistIds
 	User.findById(params.userId).then((user) => {
 		// if no playlists return an empty array
-		playlists = user.playlists ? user.playlists : []
-		res.json(playlists)
+		playlistIds = user.playlists ? user.playlists : []
+
+		// playlistIds = playlistIds.map((playlistId) => playlistId)
+		Playlist.find(
+			{
+				_id: { $in: playlistIds }
+			},
+			function(err, docs) {
+				res.json(docs)
+			}
+		)
 	})
 })
 
 // get a playlist by its id
-router.get('/:userId/playlists/:playlistId', ({ params }, res, next) => {
-	const userId = params.userId
+router.get('/playlists/:playlistId', ({ params }, res, next) => {
 	const playlistId = params.playlistId
-	User.findById(userId).then((user) => {
-		const playlist = user.playlists.id(playlistId)
-		res.json(playlist)
-	})
+	Playlist.findById(playlistId).then((playlist) => res.json(playlist))
 })
 
 // create new user

@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
 import { FaForward, FaPlay, FaPause, FaBackward } from 'react-icons/fa'
 import { FiRepeat } from 'react-icons/fi'
+import { PlayLoader } from './Loader'
 
 class Controls extends Component {
 	render = () => (
 		<div id="player-wrapper">
 			<div id="player">
 				<LeftControls
-					prevSong={() => this.props.prevSong()}
 					playing={this.props.playing}
 					togglePlayPause={() => this.props.togglePlayPause()}
-					nextSong={() => this.props.nextSong()}
+					skip={(direction) => this.props.skip(direction)}
+					songLoading={this.props.songLoading}
 				/>
 				<Seeker
 					timeRemaining={this.props.timeRemaining}
@@ -25,22 +26,30 @@ class Controls extends Component {
 
 const LeftControls = (props) => (
 	<div id="controls-left">
-		<PrevSong prevSong={() => props.prevSong()} />
-		<PlayPause playing={props.playing} togglePlayPause={() => props.togglePlayPause()} />
-		<NextSong nextSong={() => props.nextSong()} />
+		<PrevSong skip={() => props.skip('prev')} />
+		<PlayPause
+			playing={props.playing}
+			togglePlayPause={() => props.togglePlayPause()}
+			songLoading={props.songLoading}
+		/>
+		<NextSong skip={() => props.skip('next')} />
 	</div>
 )
 
 const NextSong = (props) => (
-	<button onClick={() => props.nextSong()}>
+	<button onClick={() => props.skip()}>
 		<FaForward />
 	</button>
 )
-const PlayPause = (props) => (
-	<button onClick={() => props.togglePlayPause()}>{props.playing ? <FaPause /> : <FaPlay />}</button>
-)
+const PlayPause = (props) =>
+	props.songLoading ? (
+		<PlayLoader as="button" />
+	) : (
+		<button onClick={() => props.togglePlayPause()}>{props.playing ? <FaPause /> : <FaPlay />}</button>
+	)
+
 const PrevSong = (props) => (
-	<button onClick={() => props.prevSong()}>
+	<button onClick={() => props.skip()}>
 		<FaBackward />
 	</button>
 )

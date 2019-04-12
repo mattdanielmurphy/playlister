@@ -21,8 +21,19 @@ class NewPlaylist extends Component {
 		delete playlist.songs[song.id]
 		this.setState({ playlist })
 	}
+	async getSongLinks(songs) {
+		const existingLinks = await dropbox.getSharedLinks()
+		songs.forEach(async (song) => {
+			const matchedLink = existingLinks.find((link) => link.id === song.id)
+			song.source = matchedLink ? matchedLink.url : await dropbox.getLink(song.path_lower)
+			song.source = song.source.replace(/\?dl=0/, '').replace(/www.dropbox/, 'dl.dropboxusercontent')
+			song.source += '?raw=1'
+		})
+		return songs
+	}
 	async createPlaylist(name, songs) {
 		this.setState({ loading: true })
+		songs = await this.getSongLinks(Object.values(songs))
 		const playlist = { name, songs }
 		const { account_id } = await dropbox.getUser()
 		fetch(`http://localhost/api/${account_id}/playlists`, {
@@ -44,11 +55,11 @@ class NewPlaylist extends Component {
 	async handleSubmit(e) {
 		e.preventDefault()
 		const name = e.target['playlist-name'].value.trim()
-		const songs = {}
+		const playlist = {}
 		Object.keys(this.state.playlist.songs).forEach((song) => {
-			songs[song] = {}
+			playlist[song] = {}
 			Object.keys(this.state.playlist.songs[song]).forEach((key) => {
-				songs[song][mongoKey.escape(key)] = this.state.playlist.songs[song][key]
+				playlist[song][mongoKey.escape(key)] = this.state.playlist.songs[song][key]
 			})
 		})
 
@@ -58,7 +69,7 @@ class NewPlaylist extends Component {
 			this.setState({ error: 'Error: Playlist must have a name.' })
 		} else {
 			e.target['playlist-name'].value = ''
-			this.createPlaylist(name, songs)
+			this.createPlaylist(name, playlist)
 		}
 	}
 	error() {

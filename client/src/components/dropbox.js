@@ -6,8 +6,19 @@ class DropboxObj {
 	getUser = async () => {
 		return await this.getDbx().usersGetCurrentAccount().then((res) => res)
 	}
-	getTempLink = async (songPath) => {
-		return await this.getDbx().filesGetTemporaryLink({ path: songPath }).then(({ link }) => link)
+	getSharedLinks = async () => await this.getDbx().sharingListSharedLinks().then(({ links }) => links)
+	getLink = async (songPath) => {
+		// return await this.getDbx().filesGetTemporaryLink({ path: songPath }).then(({ link }) => link)
+		return await this.getDbx()
+			.sharingCreateSharedLinkWithSettings({
+				path: songPath,
+				settings: { requested_visibility: { '.tag': 'public' } }
+			})
+			.then((res) => {
+				// report if resolved_visibility is not 'public': links won't be publically listenable
+				return res.url
+			})
+			.catch((rej) => console.log('Rejected:', rej))
 	}
 	getSongs = async () => {
 		const songs = []
