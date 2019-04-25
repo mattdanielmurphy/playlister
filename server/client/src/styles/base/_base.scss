@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css?family=Cabin:400, 700');
+
+body {
+	font-family: 'Cabin', Helvetica, Arial, sans-serif;
+	overflow: hidden;
+}
+
+h1 {
+	margin-left: .3em;
+	@media (min-width: 270px) {
+		margin-left: .5em;
+	}
+}
+
+main {
+	padding: 0;
+	margin: 0 auto;
+	@media (min-width: 250px) {
+		padding: 0 1%;
+		width: 100%;
+	}
+	@media (min-width: 450px) {
+		padding: 0 1%;
+		width: 90%;
+	}
+	@media (min-width: 650px) {
+		padding: 0 1%;
+		width: 85%;
+	}
+	@media (min-width: 800px) {
+		padding: 0 1%;
+		width: 80%;
+	}
+	@media (min-width: 900px) {
+		padding: 0 1%;
+		width: 75%;
+	}
+	max-width: 960px;
+}
+
+// @media (prefers-color-scheme: dark) {
+// 	body {
+// 		background: black;
+// 		color: white;
+// 	}
+// 	.ui.form input:not([type]),
+// 	.ui.form input[type=date],
+// 	.ui.form input[type=datetime-local],
+// 	.ui.form input[type=email],
+// 	.ui.form input[type=file],
+// 	.ui.form input[type=number],
+// 	.ui.form input[type=password],
+// 	.ui.form input[type=search],
+// 	.ui.form input[type=tel],
+// 	.ui.form input[type=text],
+// 	.ui.form input[type=time],
+// 	.ui.form input[type=url] {
+// 		color: #eee;
+// 		background: #333;
+// 		&::selection {
+// 			color: #eee;
+// 			background: #999;
+// 		}
+// 		&:focus {
+// 			color: #eee;
+// 			background: #333;
+// 			border: 1px solid desaturate(darken($blue, 30), 20);
+// 			&::placeholder {
+// 				color: #888;
+// 			}
+// 		}
+// 	}
+// 	.ui.button {
+// 		background: #666;
+// 		color: #eee;
+// 		&:focus {
+// 			background: #777;
+// 			color: #eee;
+// 		}
+// 		&:hover {
+// 			background: #888;
+// 			color: #eee;
+// 		}
+// 	}
+// }
+
+// input[type='text'] {
+// 	padding: .8em .8em .8em .8em;
+// 	margin: .1em .5em;
+// 	font-family: 'Cabin', Helvetica, Arial, sans-serif;
+// 	font-size: .8em;
+// 	box-sizing: border-box;
+// 	border: none;
+// 	border: 1px solid #ccc;
+// 	border-radius: .2em;
+// 	color: #333;
+// 	&::placeholder {
+// 		color: #888;
+// 	}
+// 	&:focus {
+// 		outline: none;
+// 		border: 1px solid $blue;
+// 	}
+// }
+
+// button {
+// 	cursor: pointer;
+// 	font-family: 'Cabin', Helvetica, Arial, sans-serif;
+// 	padding: .5em .7em .6em .7em;
+// 	margin: .1em .5em;
+// 	font-size: .8em;
+// 	background: #333;
+// 	border: none;
+// 	color: white;
+// 	box-shadow: none;
+// 	-webkit-appearance: none;
+// 	&:hover {
+// 		background: $blue;
+// 	}
+// 	&:active {
+// 		background: darken($blue, 10);
+// 	}
+// }

@@ -1,27 +1,23 @@
 {
-	"name": "playlister",
-	"version": "1.0.0",
-	"main": "index.js",
-	"author": "Matthew Daniel Murphy",
-	"license": "MIT",
-	"scripts": {
-		"start": "node index.js",
-		"watch-start": "nodemon index.js",
-		"start-client": "cd client; yarn start",
-		"dev": "concurrently \"yarn run watch-start\" \"yarn start-client\""
-	},
-	"dependencies": {
-		"cryptr": "^4.0.2",
-		"dotenv": "^7.0.0",
-		"dropbox": "^4.0.17",
-		"express": "^4.16.4",
-		"mongoose": "^5.4.21",
-		"node-fetch": "^2.3.0",
-		"qs": "^6.7.0",
-		"short-uuid": "^3.1.0",
-		"url-parse": "^1.4.4"
-	},
 	"devDependencies": {
-		"concurrently": "^4.1.0"
-	}
+		"@babel/cli": "^7.4.3",
+		"@babel/core": "^7.4.3",
+		"@babel/plugin-proposal-class-properties": "^7.4.0",
+		"@babel/preset-env": "^7.4.3",
+		"@babel/preset-react": "^7.0.0",
+		"babel-watch": "^7.0.0",
+		"concurrently": "^4.1.0",
+		"rimraf": "^2.6.3"
+	},
+	"scripts": {
+		"build": "babel server --out-dir functions --ignore server/node_modules --ignore server/client/node_modules",
+		"set-build-folder": "if test -d build\nthen\nrm -r build\nfi&& mv server/client/build .",
+		"build-client": "cd server/client && yarn build && cd ../../ && yarn set-build-folder",
+		"build-modules": "babel server --out-dir functions --ignore server/node_modules --ignore server/client/node_modules",
+		"prebuild-modules": "node node_modules/rimraf/bin functions",
+		"postbuild-modules": "cd functions && yarn && cd client && yarn",
+		"deploy": "yarn build && yarn build-client && firebase deploy",
+		"dev": "concurrently \"nodemon server/index.js\" \"cd server/client && yarn start\""
+	},
+	"dependencies": {}
 }

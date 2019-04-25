@@ -1,0 +1,44 @@
+// @media (prefers-color-scheme: dark) {
+// 	.ui.secondary.menu a.item {
+// 		color: white;
+// 		transition: .15s;
+// 		&:hover {
+// 			color: white;
+// 			background: #222;
+// 		}
+// 	}
+// 	.ui.secondary.menu .active.item {
+// 		border-bottom: 1px solid #ccc;
+// 		color: white;
+// 		&:hover {
+// 			color: white;
+// 			background: #222;
+// 		}
+// 	}
+// }
+
+nav.ui.secondary.menu {
+	// margin: 0 0 2.5em 0;
+	padding: 1em 2em;
+}
+
+.ui.secondary.menu .item {
+	border-radius: 0;
+	border-bottom: 1px solid transparent;
+}
+
+.ui.secondary.menu .active.item {
+	border-radius: 0;
+	background: none;
+	font-weight: bold;
+	border-bottom: 1px solid #666;
+}
+
+#logo {
+	padding: .9em .6em .6em .6em;
+	margin-right: 1.75em;
+	svg {
+		height: 2em;
+		fill: $blue;
+	}
+}
