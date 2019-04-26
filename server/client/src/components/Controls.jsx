@@ -3,27 +3,23 @@ import { FaForward, FaPlay, FaPause, FaBackward } from 'react-icons/fa'
 // import { FiRepeat } from 'react-icons/fi'
 import { PlayLoader } from './Loader'
 
-class Controls extends Component {
-	componentDidMount() {}
-	render = () => (
-		<div id="player-wrapper">
-			<div id="player">
-				<LeftControls
-					playing={this.props.playing}
-					togglePlayPause={() => this.props.togglePlayPause()}
-					skip={(direction) => this.props.skip(direction)}
-					songLoading={this.props.songLoading}
-				/>
-				<Seeker
-					timeRemaining={this.props.timeRemaining}
-					disabled={!this.props.canPlayThrough}
-					onChange={(e) => this.props.handleSeek(e)}
-				/>
-				{/* <RightControls toggleRepeat={(repeat) => this.props.toggleRepeat(repeat)} repeat={this.props.repeat} /> */}
-			</div>
+const Controls = (props) => (
+	<div id="player-wrapper">
+		<div id="player">
+			<LeftControls
+				playing={props.playing}
+				togglePlayPause={() => props.togglePlayPause()}
+				skip={(direction) => props.skip(direction)}
+				songLoading={props.songLoading}
+			/>
+			<Seeker
+				timeRemaining={props.timeRemaining}
+				disabled={!props.canPlayThrough}
+				onChange={(e) => props.handleSeek(e)}
+			/>
 		</div>
-	)
-}
+	</div>
+)
 
 const LeftControls = (props) => (
 	<div id="controls-left">

@@ -1,6 +1,6 @@
-$color1: $blue;
-$color2: adjust-hue($blue, 15);
-$color3: adjust-hue($blue, 30);
+$color1: #555;
+$color2: #555;
+$color3: #555;
 
 $spinner: 1;
 $fasterSpinner: $spinner * 1.1;
@@ -15,6 +15,14 @@ $borderWidth: 2px;
 	left: 0;
 	width: 100%;
 	height: 100%;
+	&.inline {
+		position: relative;
+		left: 30px;
+		top: -10px;
+		height: 200px;
+		width: 200px;
+		margin: 0 auto;
+	}
 	div {
 		display: block;
 		position: relative;
@@ -70,7 +78,6 @@ $borderWidth: 2px;
 	}
 }
 
-$basic-dark-color: #444; //color of the spinner
 $border-width: 1px; //width of spinners border
 $basic-spinner-dimensions: 20px; //width and height of spinner
 $main-spinner-dimensions: $basic-spinner-dimensions - $border-width * 2; //width and height of bigger circle
@@ -90,6 +97,15 @@ $small-spinner-dimensions: $main-spinner-dimensions * 0.5; //width and height of
 	position: relative;
 	width: $basic-spinner-dimensions;
 	height: $basic-spinner-dimensions;
+	&.inline {
+		left: -2px;
+		&:before,
+		&:after {
+			border-color: $darkPink;
+			border-top-color: transparent;
+			border-left-color: transparent;
+		}
+	}
 
 	&:before,
 	&:after {
@@ -99,49 +115,39 @@ $small-spinner-dimensions: $main-spinner-dimensions * 0.5; //width and height of
 		border-width: 2px;
 		border-style: solid;
 		border-radius: 50%;
+		border-color: $lightPink;
+		border-top-color: transparent;
+		border-left-color: transparent;
+	}
+	&:before {
+		width: $main-spinner-dimensions;
+		height: $main-spinner-dimensions;
+		top: 1px;
+		animation: rotate-animation 1s linear 0s infinite;
+	}
+	&:after {
+		width: $small-spinner-dimensions;
+		height: $small-spinner-dimensions;
+		top: ($main-spinner-dimensions - $small-spinner-dimensions) / 2;
+		left: ($main-spinner-dimensions - $small-spinner-dimensions) / 2;
+		animation: anti-rotate-animation 0.85s linear 0s infinite;
 	}
 
 	@keyframes rotate-animation {
-		0% {
+		from {
 			transform: rotate(0deg);
 		}
-
-		100% {
+		to {
 			transform: rotate(360deg);
 		}
 	}
 
 	@keyframes anti-rotate-animation {
-		0% {
+		from {
 			transform: rotate(0deg);
 		}
-
-		100% {
+		to {
 			transform: rotate(-360deg);
 		}
-	}
-
-	&:before {
-		width: $main-spinner-dimensions;
-		height: $main-spinner-dimensions;
-		border-bottom-color: $basic-dark-color;
-		border-right-color: $basic-dark-color;
-		border-top-color: rgba($basic-dark-color, 0);
-		border-left-color: rgba($basic-dark-color, 0);
-		top: 0px;
-		left: 0px;
-		animation: rotate-animation 1s linear 0s infinite;
-	}
-
-	&:after {
-		width: $small-spinner-dimensions;
-		height: $small-spinner-dimensions;
-		border-bottom-color: $basic-dark-color;
-		border-right-color: $basic-dark-color;
-		border-top-color: rgba($basic-dark-color, 0);
-		border-left-color: rgba($basic-dark-color, 0);
-		top: ($main-spinner-dimensions - $small-spinner-dimensions) / 2;
-		left: ($main-spinner-dimensions - $small-spinner-dimensions) / 2;
-		animation: anti-rotate-animation 0.85s linear 0s infinite;
 	}
 }

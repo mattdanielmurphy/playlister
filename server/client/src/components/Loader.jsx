@@ -1,14 +1,14 @@
 import React from 'react'
 
-export default () => (
-	<div className="loader">
+export default ({ type }) => (
+	<div className={`loader ${type || ''}`}>
 		<div />
 	</div>
 )
 
-export const PlayLoader = () => (
+export const PlayLoader = ({ type }) => (
 	<div className="play-loader-wrapper">
-		<div className="play-loader">
+		<div className={`play-loader ${type || ''}`}>
 			<div />
 		</div>
 	</div>

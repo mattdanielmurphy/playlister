@@ -23,15 +23,15 @@ class Playlist extends Component {
 	}
 	setPlaylistState = (state) => this.setState(state)
 	componentWillMount = () => this.getSongs()
-	render = () => (
-		<main>
-			{this.state.error ? (
-				<h1>{this.state.error}</h1>
-			) : !this.state.songs || this.state.songs.length === 0 ? (
-				<Loader />
-			) : (
-				<div id="playlist">
-					<h1>{this.state.name}</h1>
+	render = () =>
+		this.state.error ? (
+			<h1>{this.state.error}</h1>
+		) : !this.state.songs || this.state.songs.length === 0 ? (
+			<Loader />
+		) : (
+			<div>
+				<h1>{this.state.name}</h1>
+				<div id="content-wrapper">
 					<Player
 						currentSongIndex={this.state.currentSongIndex}
 						songs={this.state.songs}
@@ -39,9 +39,8 @@ class Playlist extends Component {
 						setPlaylistState={(state) => this.setPlaylistState(state)}
 					/>
 				</div>
-			)}
-		</main>
-	)
+			</div>
+		)
 }
 
 export default Playlist

@@ -4,12 +4,14 @@ import Cookies from 'js-cookie'
 import parse from 'url-parse'
 
 import Header from './components/Header'
+import dropbox from './components/dropbox'
+import Loader from './components/Loader'
 import Authorize from './pages/Authorize'
-import Playlists from './pages/Playlists'
+import MyPlaylists from './pages/MyPlaylists'
 import Playlist from './pages/Playlist'
 import NewPlaylist from './pages/NewPlaylist'
+import AddingSongs from './pages/AddingSongs'
 import NotFound from './pages/NotFound'
-import dropbox from './components/dropbox'
 
 class Routes extends Component {
 	render = () =>
@@ -20,13 +22,14 @@ class Routes extends Component {
 					path="/auth"
 					render={() => (this.props.authenticated ? <Redirect to="/playlists" /> : <Authorize />)}
 				/>
-				<Route exact path="/playlists" render={(routeProps) => <Playlists {...routeProps} />} />
+				<Route exact path="/playlists" component={MyPlaylists} />
 				<Route
 					exact
 					path="/playlists/new"
 					render={(routeProps) => <NewPlaylist {...this.props} {...routeProps} />}
 				/>
-				<Route exact path="/playlists/:id" render={(routeProps) => <Playlist {...routeProps} />} />
+				<Route exact path="/playlists/:id" component={Playlist} />
+				<Route exact path="/adding-songs" component={AddingSongs} />
 				<Route component={NotFound} />
 			</Switch>
 		) : (
@@ -35,7 +38,7 @@ class Routes extends Component {
 				<Route exact path="/auth" component={Authorize} />
 				<Route exact path="/playlists" component={Authorize} />
 				<Route exact path="/playlists/new" component={Authorize} />
-				<Route exact path="/playlists/:id" render={(routeProps) => <Playlist {...routeProps} />} />
+				<Route exact path="/playlists/:id" component={Playlist} />
 				<Route component={NotFound} />
 			</Switch>
 		)
@@ -57,7 +60,7 @@ class AppRouter extends Component {
 	}
 
 	render = () => {
-		if (this.state.loading) return <div id="loading">Loading...</div>
+		if (this.state.loading) return <Loader />
 		else
 			return (
 				<Router>

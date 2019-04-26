@@ -19,7 +19,7 @@ class NowPlaying extends React.Component {
 		let start = () => {
 			this.timer = setInterval(() => {
 				random(items)
-			}, 150)
+			}, 300)
 		}
 
 		start()

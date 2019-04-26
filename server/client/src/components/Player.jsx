@@ -10,7 +10,8 @@ class Player extends Component {
 		timeRemaining: '-:--',
 		songSources: [],
 		canPlayThrough: false,
-		songLoading: true
+		songLoading: true,
+		playing: false
 	}
 	loadAudio(currentSongIndex = this.props.currentSongIndex) {
 		const songs = this.props.songs
@@ -42,6 +43,7 @@ class Player extends Component {
 		this.loadAudio(currentSongIndex)
 		const seek = document.getElementById('seek')
 		seek.value = 0
+		if (!this.state.playWhenReady) this.setState({ playWhenReady: true })
 	}
 	playSong(currentSongIndex) {
 		this.state.currentSong.sound.stop()
@@ -142,12 +144,13 @@ class Player extends Component {
 		this.handleKeyboardControls()
 	}
 	render = () => (
-		<div>
+		<main id="playlist">
 			<PlayerSongs
-				playSong={(i) => this.playSong(i)}
+				changeSong={(i) => this.changeSong(i)}
 				songs={this.props.songs}
 				currentSongIndex={this.props.currentSongIndex}
 				playing={this.state.playing}
+				songLoading={this.state.songLoading}
 			/>
 			<Controls
 				songLoading={this.state.songLoading}
@@ -160,7 +163,7 @@ class Player extends Component {
 				handleSeek={(e) => this.handleSeek(e)}
 				toggleRepeat={(repeat) => this.toggleRepeat(repeat)}
 			/>
-		</div>
+		</main>
 	)
 }
 

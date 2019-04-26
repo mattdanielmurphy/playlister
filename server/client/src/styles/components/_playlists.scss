@@ -4,3 +4,20 @@
 audio {
 	vertical-align: bottom;
 }
+
+.playlist {
+	text-transform: uppercase;
+	font-size: 1.2em;
+	display: block;
+	color: black;
+	padding: .3rem .3rem;
+	&:hover {
+		background: #ffdfdf;
+		color: black;
+	}
+}
+
+#playlists {
+	// width: 70%;
+	// max-width: 700px;
+}

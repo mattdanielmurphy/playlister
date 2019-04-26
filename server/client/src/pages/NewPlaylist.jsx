@@ -77,25 +77,27 @@ class NewPlaylist extends Component {
 		return <div className="error">{this.state.error}</div>
 	}
 	render = () => (
-		<main>
+		<main id="create-playlist">
 			<h1>Create A Playlist</h1>
-			<Songs
-				dbx={this.props.dbx}
-				addSongToPlaylist={(song) => this.addSongToPlaylist(song)}
-				removeSongFromPlaylist={(song) => this.removeSongFromPlaylist(song)}
-			/>
-			<Form id="create-playlist" onSubmit={(e) => this.handleSubmit(e)}>
-				{this.state.error && this.error()}
-				{this.state.added && (
-					<p>
-						Playlist created! Listen to it <a href={this.state.link}>here</a>.
-					</p>
-				)}
-				<Form.Group>
-					<Form.Input type="text" name="playlist-name" placeholder="Playlist Title" />
-					<Button loading={this.state.loading}>Create playlist</Button>
-				</Form.Group>
-			</Form>
+			<div id="content-wrapper">
+				<Songs
+					dbx={this.props.dbx}
+					addSongToPlaylist={(song) => this.addSongToPlaylist(song)}
+					removeSongFromPlaylist={(song) => this.removeSongFromPlaylist(song)}
+				/>
+				<Form id="create-playlist" onSubmit={(e) => this.handleSubmit(e)}>
+					{this.state.error && this.error()}
+					{this.state.added && (
+						<p>
+							Playlist created! Listen to it <a href={this.state.link}>here</a>.
+						</p>
+					)}
+					<Form.Group>
+						<Form.Input type="text" name="playlist-name" placeholder="Playlist Title" />
+						<Button loading={this.state.loading}>Create playlist</Button>
+					</Form.Group>
+				</Form>
+			</div>
 		</main>
 	)
 }

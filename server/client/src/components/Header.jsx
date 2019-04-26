@@ -1,10 +1,24 @@
 import React from 'react'
-import { Menu } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom'
 
 const Header = () => (
-	<Menu secondary as="nav">
-		<Menu.Item id="logo">
+	<nav>
+		<div id="name">PLAYLISTER</div>
+		<div id="page-links">
+			<NavLink name="my-playlists" exact activeClassName="active" to="/playlists">
+				My Playlists
+			</NavLink>
+			<NavLink name="new-playlist" exact activeClassName="active" to="/playlists/new">
+				New Playlist
+			</NavLink>
+		</div>
+	</nav>
+)
+
+export default Header
+
+{
+	/* <Menu.Item id="logo">
 			<svg
 				alt="playlist music by shashank singh from the Noun Project"
 				xmlns="http://www.w3.org/2000/svg"
@@ -50,14 +64,5 @@ const Header = () => (
 					</g>
 				</g>
 			</svg>
-		</Menu.Item>
-		<Menu.Item name="playlists" as={NavLink} exact activeClassName="active" to="/playlists">
-			Playlists
-		</Menu.Item>
-		<Menu.Item name="playlists" as={NavLink} exact activeClassName="active" to="/playlists/new">
-			New Playlist
-		</Menu.Item>
-	</Menu>
-)
-
-export default Header
+		</Menu.Item> */
+}
