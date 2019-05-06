@@ -1,0 +1,378 @@
+.song {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	display: inline-grid;
+	grid-template-columns: auto auto;
+	justify-content: start;
+	font-size: 1rem;
+	line-height: 2.8rem;
+	font-size: 1.2rem;
+	transition: color .15s;
+	padding: 0 .7rem;
+	&:last-of-type {
+		border: none;
+	}
+	&:hover,
+	&.current-song:hover {
+		cursor: pointer;
+		color: $accentText;
+	}
+	&.current-song {
+		color: black;
+	}
+	&.selected {
+		display: none;
+		// &:hover {
+		// 	background: $accentText;
+		// 	color: black;
+		// }
+		// font-weight: bold;
+	}
+}
+
+.song-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+	min-width: 0;
+	display: inline-block;
+	&.now-playing {
+		color: $nowPlayingTextColor;
+	}
+}
+.now-playing-container {
+	width: 25px;
+	margin-right: 3px;
+	display: inline-block;
+	text-align: center;
+}
+.now-playing {
+	left: -2px;
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+	position: relative;
+	display: inline-block;
+	justify-content: center;
+
+	.item-wrapper {
+		position: relative;
+		height: 10px;
+		bottom: 0px;
+		display: inline-block;
+		width: 2px;
+		margin: 0 1.5px;
+	}
+
+	.item {
+		position: absolute;
+		top: 50%;
+		bottom: 0%;
+		background: $nowPlayingColor;
+		left: 0;
+		right: 0;
+		border-radius: 6px;
+		transition: all .3s ease;
+	}
+}
+
+#playlist {
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+#player-wrapper {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: $playerBackgroundColor;
+}
+#player {
+	margin: 0 auto;
+	padding: 2em 1em 2em 1em;
+	// display: flex;
+	display: grid;
+	grid-template-columns: 1fr minmax(auto, 600px) 1fr;
+	// max-width: 800px;
+	align-items: center;
+	#controls-left {
+		text-align: center;
+		margin-right: 5px;
+		min-width: 95px;
+		justify-self: end;
+		margin-right: 2rem;
+	}
+	#seek-display {
+		flex-grow: 1;
+		display: flex;
+		#seek-wrapper {
+			margin-top: -9px;
+			flex-grow: 1;
+			padding: 0 10px;
+		}
+		#time-remaining {
+			margin-top: -4px;
+			width: 3em;
+			font-size: .8em;
+			color: $darkText;
+		}
+	}
+	#controls-right {
+		font-size: 1.1em;
+		margin-top: -3px;
+		margin-left: 2rem;
+		#volume-control {
+			color: $playerSliderThumb;
+			display: inline-grid;
+			grid-template-columns: 2.5rem 5rem;
+			align-items: center;
+		}
+		#volume-input {
+			position: relative;
+			top: -1px;
+			background: none;
+		}
+	}
+	button {
+		margin: 0 2px;
+		font-size: 1.1em;
+		border: none;
+		background: none;
+		color: $playerButtons;
+		&:hover {
+			cursor: pointer;
+			color: $playerButtonsHover;
+		}
+	}
+}
+
+#seek {
+	-webkit-appearance: none;
+	width: 100%;
+	position: relative;
+	top: 5px;
+	background: none;
+}
+#seek:focus {
+	outline: none;
+}
+#seek::-webkit-slider-runnable-track {
+	width: 100%;
+	border-radius: 4px;
+	height: 20px;
+	cursor: pointer;
+	background: $playerTrackBackground;
+}
+#seek::-webkit-slider-thumb {
+	height: 20px;
+	width: 10px;
+	border-radius: 2px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+	-webkit-appearance: none;
+}
+#seek:focus::-webkit-slider-runnable-track {
+	background: #dadada;
+}
+#seek::-moz-range-track {
+	width: 100%;
+	border-radius: 4px;
+	height: 20px;
+	cursor: pointer;
+	background: $playerTrackBackground;
+}
+#seek::-moz-range-thumb {
+	height: 20px;
+	width: 10px;
+	border-radius: 2px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+}
+#seek::-ms-track {
+	width: 100%;
+	border-radius: 4px;
+	height: 20px;
+	cursor: pointer;
+	background: transparent;
+	color: transparent;
+}
+#seek::-ms-fill-lower {
+	background: $playerTrackBackground;
+}
+#seek::-ms-fill-upper {
+	background: $playerTrackBackground;
+}
+#seek::-ms-thumb {
+	height: 20px;
+	width: 10px;
+	border-radius: 2px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+	height: 20px;
+}
+#seek:focus::-ms-fill-lower {
+	background: $playerTrackBackgroundFocus;
+}
+#seek:focus::-ms-fill-upper {
+	background: $playerTrackBackgroundFocus;
+}
+
+@media (max-width: 500px) {
+	#seek {
+		position: relative;
+		top: 5px;
+	}
+	#seek:focus {
+		outline: none;
+	}
+	#seek::-webkit-slider-runnable-track {
+		height: 20px;
+	}
+	#seek::-webkit-slider-thumb {
+		height: 20px;
+	}
+	#seek::-moz-range-track {
+		height: 20px;
+	}
+	#seek::-moz-range-thumb {
+		height: 20px;
+		width: 10px;
+	}
+	#seek::-ms-track {
+		height: 20px;
+		color: transparent;
+	}
+	#seek::-ms-thumb {
+		height: 20px;
+		width: 10px;
+		height: 20px;
+	}
+
+	#player-wrapper {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	#player {
+		padding: 2em 0;
+		#controls-left {
+			margin-right: 0;
+			min-width: 60px;
+			button {
+				margin: 0;
+				&.prev-song {
+					display: none;
+				}
+			}
+		}
+		#seek-display {
+			flex-grow: 1;
+			display: flex;
+			#seek-wrapper {
+				margin-top: -9px;
+				flex-grow: 1;
+				padding: 0 10px;
+			}
+			#time-remaining {
+				margin-top: -4px;
+				width: 3em;
+				font-size: .8em;
+			}
+		}
+		button {
+			margin: 0 2px;
+			font-size: 1.1em;
+		}
+	}
+}
+
+#volume-input {
+	-webkit-appearance: none;
+	width: 100%;
+	margin: 4px 0;
+}
+#volume-input:focus {
+	outline: none;
+}
+#volume-input::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 3px;
+	cursor: pointer;
+	box-shadow: none;
+	background: $volumeSliderBackground;
+	border-radius: 0px;
+	border: none;
+}
+#volume-input::-webkit-slider-thumb {
+	box-shadow: none;
+	border: none;
+	height: 10px;
+	width: 10px;
+	border-radius: 10px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+	-webkit-appearance: none;
+	margin-top: -4px;
+}
+#volume-input:focus::-webkit-slider-runnable-track {
+	background: #367ebd;
+}
+#volume-input::-moz-range-track {
+	width: 100%;
+	height: 3px;
+	cursor: pointer;
+	box-shadow: none;
+	background: $volumeSliderBackground;
+	border-radius: 0px;
+	border: none;
+}
+#volume-input::-moz-range-thumb {
+	box-shadow: none;
+	border: none;
+	height: 10px;
+	width: 10px;
+	border-radius: 10px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+}
+#volume-input::-ms-track {
+	width: 100%;
+	height: 3px;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+#volume-input::-ms-fill-lower {
+	background: #2a6495;
+	border: none;
+	border-radius: 0px;
+	box-shadow: none;
+}
+#volume-input::-ms-fill-upper {
+	background: $volumeSliderBackground;
+	border: none;
+	border-radius: 0px;
+	box-shadow: none;
+}
+#volume-input::-ms-thumb {
+	box-shadow: none;
+	border: none;
+	height: 10px;
+	width: 10px;
+	border-radius: 10px;
+	background: $playerSliderThumb;
+	cursor: pointer;
+	height: 3px;
+}
+#volume-input:focus::-ms-fill-lower {
+	background: $volumeSliderBackground;
+}
+#volume-input:focus::-ms-fill-upper {
+	background: #367ebd;
+}

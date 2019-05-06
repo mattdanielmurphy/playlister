@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+@import url('https://fonts.googleapis.com/css?family=Neuton:200,300,400');
+
+body {
+	font-family: 'Lato', Helvetica, Arial, sans-serif;
+	background: $backgroundColor;
+	color: $darkText;
+	margin: 0;
+	font-size: 1.2rem;
+}
+
+a {
+	color: $accentText;
+	transition: .15s ease;
+	&:hover {
+		color: black;
+	}
+}
+
+.heading {
+	max-width: 850px;
+}
+
+.top-heading {
+	margin: 8rem auto 0 auto;
+	&.no-nav-heading {
+		margin-top: 10rem;
+	}
+}
+
+.back-nav {
+	font-size: 1rem;
+}
+
+.button,
+.ui.button {
+	background: none;
+	border: 2px solid $main4;
+	color: $darkText;
+	text-transform: lowercase;
+	padding: .2em .5em .2em .5em;
+	font-family: "Lato", sans-serif;
+	font-weight: normal;
+	border-radius: .2em;
+	transition: .15s;
+	&.large-button {
+		padding: .7em 1em .8em 1em;
+		font-size: 1.2rem;
+	}
+	&:hover {
+		border-color: $accent;
+		color: $accent;
+		background: none;
+		cursor: pointer;
+	}
+	&:active {
+		border-color: darken($accent, 10);
+		color: darken($accent, 10);
+	}
+}
+
+h1,
+h1:first-child {
+	font: 3.7rem "Neuton", serif;
+	font-weight: 200;
+	margin: 3rem auto 2rem auto;
+	max-width: 700px;
+}
+
+h2 {
+	font: 2.2rem "Neuton", serif;
+	font-weight: 200;
+	margin: 3rem auto 0 auto;
+	text-transform: lowercase;
+	color: $darkText;
+	max-width: 700px;
+}
+
+#content-wrapper {
+	display: grid;
+	justify-content: start;
+	grid-template-columns: minmax(auto, 700px);
+	@media (min-width: 500px) {
+		justify-content: center;
+	}
+	padding: 0 1rem;
+	padding-bottom: 4rem;
+	width: 100%;
+	margin: 2rem auto;
+	position: relative;
+	left: 50px;
+	max-width: 1200px;
+}

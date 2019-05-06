@@ -1,0 +1,90 @@
+#songs {
+	margin-bottom: 2em;
+	display: grid;
+}
+
+#create-playlist {
+	h2.inline {
+		display: inline;
+		margin-right: 1rem;
+	}
+}
+
+#playlist {
+	margin-bottom: 1em;
+}
+
+.ui.form .fields {
+	display: grid;
+	grid-row-gap: 1rem;
+	grid-gap: 1rem;
+	grid-template-columns: 1fr 10rem;
+	@media (max-width: 500px) {
+		grid-template-columns: 1fr;
+	}
+	justify-content: center;
+	max-width: 450px;
+	margin: 0 auto;
+}
+
+.ui.form .fields > .field {
+	flex: none;
+	padding: 0;
+}
+
+.error {
+	font-size: 1.3rem;
+	margin-bottom: 1.4rem;
+	color: #c43838;
+}
+
+.playlist-title-input {
+	display: block;
+	background: none;
+	font: 3.7rem "Neuton";
+	font-weight: 200;
+	padding: 0;
+	margin: 0 auto;
+	border: none;
+	width: 100%;
+	max-width: 700px;
+	color: $darkText;
+	&:focus {
+		color: $accent;
+		border: none;
+		outline: none;
+		background: none;
+	}
+	&::placeholder {
+		color: $main5;
+	}
+}
+
+.playlist-in-progress-container {
+	margin: 2rem 0;
+	width: 100%;
+	padding: 1.5rem 1rem;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.song.playlist-in-progress-song {
+	user-select: none;
+	border-bottom: none;
+	display: block;
+	transition: color .15s;
+	.song-number {
+		position: relative;
+		top: .15rem;
+	}
+	&:hover {
+		cursor: move;
+		color: $accent;
+		// background: $backgroundColor;
+	}
+	&.being-dragged {
+		color: $accent;
+		&:hover {
+			color: $accent;
+		}
+	}
+}
