@@ -13,9 +13,16 @@ class Authorize extends Component {
 		this.authUrl()
 	}
 	render = () => (
-		<main>
+		<main id="page-wrap">
 			<h1>Authorization Required</h1>
-			<div id="content-wrapper">{this.state.url && <a href={this.state.url}>Click here to authorize.</a>}</div>
+			<div id="content-wrapper">
+				<p>In order to use Playlist Dr, you must give permission for this app to use your Dropbox account.</p>
+				{this.state.url && (
+					<h3>
+						<a href={this.state.url}>Click here to authorize.</a>
+					</h3>
+				)}
+			</div>
 		</main>
 	)
 }

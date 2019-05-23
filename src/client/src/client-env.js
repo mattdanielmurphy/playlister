@@ -1,10 +1,10 @@
 require('dotenv').config()
 
 const env = {
-	mode: 'production',
-	api: { url: 'https://playlistdr.com' },
-	redirect: { uri: 'https://playlistdr.com/api/auth' },
-	app: { url: 'https://playlistdr.com' }
+	mode: 'development',
+	api: { url: 'http://localhost', port: 80 },
+	redirect: { uri: 'http://localhost/api/auth' },
+	app: { url: 'http://localhost:3000' }
 }
 
 module.exports = { env }

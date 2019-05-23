@@ -64,7 +64,7 @@ class AppRouter extends Component {
 		else
 			return (
 				<Router>
-					<div>
+					<div id="outer-container">
 						<Header />
 						<Routes authenticated={this.state.authenticated} />
 					</div>

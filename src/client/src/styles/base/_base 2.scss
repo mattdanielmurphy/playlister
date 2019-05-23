@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700');
+
+body {
+	font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+	margin: 0;
+	font-size: .9rem;
+}
+
+a {
+	transition: .15s ease;
+	color: #4a90e2;
+	&:hover {
+		color: black;
+	}
+}
+
+.heading {
+	max-width: 850px;
+}
+
+h1 {
+	font-size: 1.3rem;
+	margin-bottom: 1.3rem;
+	font-weight: 500;
+}
+
+p {
+	line-height: 1.5;
+	margin-bottom: 1.2rem;
+}
+
+h3 {
+	font-size: 1.05rem;
+}
+
+#page-heading {
+	background: $mainColor;
+	text-align: center;
+	padding: 1rem 0 2rem 0;
+	h1 {
+		font-size: 1.7rem;
+		font-weight: 400;
+	}
+	color: white;
+}
+
+.button,
+.ui.button {
+	background: none;
+	text-transform: uppercase;
+	padding: 0.9em 2em 1em 2em;
+	font-family: "Montserrat", sans-serif;
+	font-weight: 500;
+	font-size: .8rem;
+	border-radius: .2em;
+	// border: 1px solid #979797;
+	border: none;
+	background: #f5f5f5;
+	transition: .15s;
+	color: #444;
+	margin: .6rem 0;
+	&:hover {
+		background: #eee;
+		color: #333;
+		cursor: pointer;
+	}
+}
+
+main {
+	display: grid;
+	justify-content: start;
+	grid-template-columns: minmax(auto, 700px);
+	padding: 0 1.5rem;
+	padding-bottom: 4rem;
+	margin: 2.5rem auto;
+}
+
+#content-wrapper {
+	margin-left: 1rem;
+}

@@ -1,0 +1,47 @@
+audio {
+	vertical-align: bottom;
+}
+
+.playlist {
+	font-size: 1rem;
+	padding: .6rem 1rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	justify-content: space-between;
+	a {
+		color: $darkText;
+		&:hover {
+			color: $mainColor;
+		}
+	}
+	.playlist-name {
+		text-align: left;
+		font-weight: 500;
+	}
+}
+
+#playlists {
+	h1 {
+		margin-bottom: 0;
+	}
+	#content-wrapper {
+		margin-top: 0;
+		text-align: right;
+	}
+}
+
+button.date-sort {
+	margin-right: 1.2rem;
+	margin-bottom: .5rem;
+	padding: .4rem .6rem .4rem .8rem;
+	font-weight: 600;
+}
+
+.sort-icon {
+	position: relative;
+	top: .06rem;
+	left: .02rem;
+	svg {
+		fill: #444;
+	}
+}

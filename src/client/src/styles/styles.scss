@@ -1,7 +1,9 @@
+@import './reset.css';
 @import './base/settings';
 @import './base/base';
 @import './components/header';
-@import './components/new-playlist';
-@import './components/playlists';
-@import './components/loader';
-@import './components/player';
+@import './components/burger-menu';
+@import './components/my-playlists';
+// @import './components/new-playlist';
+// @import './components/loader';
+// @import './components/player';

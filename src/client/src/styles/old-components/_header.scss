@@ -1,26 +1,24 @@
-#header {
+nav {
 	margin: 0 auto;
 	display: grid;
+	grid-template-columns: 1fr 2fr;
 	justify-items: center;
 	justify-content: center;
 	text-align: center;
-	background: $mainColor;
-	#logo-container {
+	background: $main4;
+	#name {
+		justify-self: stretch;
+		font: 1rem "Neuton", serif;
 		line-height: 1;
 		font-weight: normal;
+		background: $main5;
 		a {
 			color: white;
 		}
-		padding: 1.5rem 1rem;
+		padding: 0.7rem 1rem;
 	}
+
 	#page-links {
-		@media (min-width: 600px) {
-			width: 40%;
-			position: absolute;
-			top: 1.3rem;
-			left: 1rem;
-			text-align: center;
-		}
 		padding: .7rem 0;
 		width: 100%;
 		max-width: 14rem;

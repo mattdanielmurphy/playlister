@@ -93,12 +93,6 @@ class NewPlaylist extends Component {
 		<main id="create-playlist">
 			<div className="top-heading heading no-nav-heading">
 				<h2>creating</h2>
-				<input
-					className="playlist-title-input"
-					name="playlist-name"
-					type="text"
-					placeholder="Click to set playlist title"
-				/>
 			</div>
 			<div id="content-wrapper">
 				<Songs
@@ -121,7 +115,13 @@ class NewPlaylist extends Component {
 						// </p>
 						<Redirect to={this.state.link} />
 					)}
-					<Button className="button large-button" loading={this.state.loading}>
+					<input
+						className="playlist-title-input"
+						name="playlist-name"
+						type="text"
+						placeholder="Click to set playlist title"
+					/>
+					<Button className="button" loading={this.state.loading}>
 						Create playlist
 					</Button>
 				</Form>

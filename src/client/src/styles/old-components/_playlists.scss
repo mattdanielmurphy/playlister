@@ -6,12 +6,15 @@ audio {
 }
 
 .playlist {
-	font-size: 1.3rem;
-	display: block;
+	font-size: 1rem;
 	padding: .6rem 1rem;
 	display: grid;
-	grid-template-columns: auto 20rem;
+	grid-template-columns: 1fr 1fr;
 	justify-content: space-between;
+	// justify-items: start;
+	// .playlist-date {
+	// 	justify-self: end;
+	// }
 	a {
 		color: $darkText;
 		&:hover {
@@ -37,8 +40,4 @@ audio {
 .sort-icon {
 	position: relative;
 	top: .15em;
-}
-
-.playlist-date {
-	text-align: right;
 }

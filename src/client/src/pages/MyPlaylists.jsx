@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import fetch from 'node-fetch'
 import dropbox from '../components/dropbox'
@@ -9,7 +8,9 @@ import showDateString from '../components/dateString'
 
 const Playlist = ({ playlist }) => (
 	<div className="playlist">
-		<Link to={`/playlists/${playlist._id}`}>{playlist.name}</Link>
+		<div className="playlist-name">
+			<a href={`/playlists/${playlist._id}`}>{playlist.name}</a>
+		</div>
 		<div className="playlist-date">{showDateString(playlist.date)}</div>
 	</div>
 )
@@ -41,28 +42,30 @@ class MyPlaylists extends Component {
 		this.setState({ playlists: this.state.playlists.reverse(), sortReversed: !this.state.sortReversed })
 	render() {
 		return (
-			<main id="playlists">
-				<div className="top-heading heading no-nav-heading">
+			<div>
+				<div id="page-heading">
 					<h1>My Playlists</h1>
 				</div>
-				<div id="content-wrapper">
-					{this.loading ? (
-						<Loader type="inline" />
-					) : this.state.noPlaylists ? (
-						<NoPlaylists />
-					) : (
-						<div>
-							<button className="button date-sort" onClick={() => this.reverseSort()}>
-								Date{' '}
-								<span className="sort-icon">
-									{this.state.sortReversed ? <FaCaretUp /> : <FaCaretDown />}
-								</span>
-							</button>
-							{this.state.playlists.map((playlist, i) => <Playlist key={i} playlist={playlist} />)}
-						</div>
-					)}
-				</div>
-			</main>
+				<main id="playlists">
+					<div id="content-wrapper">
+						{this.loading ? (
+							<Loader type="inline" />
+						) : this.state.noPlaylists ? (
+							<NoPlaylists />
+						) : (
+							<div>
+								<button className="button date-sort" onClick={() => this.reverseSort()}>
+									Date{' '}
+									<span className="sort-icon">
+										{this.state.sortReversed ? <FaCaretUp /> : <FaCaretDown />}
+									</span>
+								</button>
+								{this.state.playlists.map((playlist, i) => <Playlist key={i} playlist={playlist} />)}
+							</div>
+						)}
+					</div>
+				</main>
+			</div>
 		)
 	}
 }

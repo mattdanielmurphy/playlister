@@ -6,11 +6,9 @@ const { env } = require('../server-env')
 
 // dropbox
 router.get('/auth', async (req, res, next) => {
-	console.log('get auth')
 	const code = req.query.code
 	if (code) {
 		const tokenHash = await auth.getHashTokenFromCode(code).catch((err) => console.log('Err:', err))
-		console.log(env.app.url)
 		res.redirect(`${env.app.url}/?tokenHash=${tokenHash}`)
 	}
 })
