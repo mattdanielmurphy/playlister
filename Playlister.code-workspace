@@ -4,10 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "server"
+			"path": "src"
 		},
 		{
-			"path": "server/client"
+			"path": "src/client"
 		}
 	],
 	"settings": {}
