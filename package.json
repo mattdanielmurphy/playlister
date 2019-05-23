@@ -11,15 +11,11 @@
 	},
 	"scripts": {
 		"build": "babel src --out-dir functions --copy-files --ignore src/node_modules --ignore src/client/node_modules",
-		"set-build-folder": "if test -d build\nthen\nrm -r build\nfi&& mv src/client/build .",
-		"build-client": "cd src/client && yarn build && cd ../../ && yarn set-build-folder",
 		"build-modules": "babel src --out-dir functions --ignore src/node_modules --ignore src/client/node_modules",
 		"prebuild-modules": "node node_modules/rimraf/bin functions",
 		"postbuild-modules": "cd functions && yarn && cd client && yarn",
-		"deploy": "yarn set-env-to-prod && yarn build && yarn build-client && firebase deploy",
-		"dev": "yarn set-env-to-dev && concurrently \"nodemon src/index.js\" \"cd src/client && yarn start\"",
-		"set-env-to-dev": "mv src/client/src/client-env.js src/client/src/client-env-p.js && mv src/client/src/client-env-d.js src/client/src/client-env.js && mv src/server-env.js src/server-env-p.js && mv src/server-env-d.js src/server-env.js && mv src/index.js src/index-p.js && mv src/index-d.js src/index.js",
-		"set-env-to-prod": "mv src/client/src/client-env.js src/client/src/client-env-d.js && mv src/client/src/client-env-p.js src/client/src/client-env.js && mv src/server-env.js src/server-env-d.js && mv src/server-env-p.js src/server-env.js && mv src/index.js src/index-d.js && mv src/index-p.js src/index.js"
+		"deploy": "bash scripts/set-dev-env.sh && yarn build && bash scripts/build-client.sh && firebase deploy",
+		"dev": "bash scripts/set-dev-env.sh && concurrently \"nodemon src/index.js\" \"cd src/client && yarn start\""
 	},
 	"dependencies": {}
 }
